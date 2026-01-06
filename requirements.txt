@@ -5,8 +5,6 @@
 # 使用以下命令生成依赖列表（安装包后）：
 # pip freeze > requirements.txt
 
-# 目前项目暂无外部依赖
-# 后续添加依赖时，请在此文件中添加，例如：
-# requests>=2.28.0
-# beautifulsoup4>=4.11.0
-
+# 网络请求依赖
+aiohttp>=3.10.10
+requests>=2.32.3
