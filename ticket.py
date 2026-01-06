@@ -76,19 +76,19 @@ def send_dingdingbot(tickets_info):
 
     # 发送POST请求到钉钉机器人接口
     try:
-        # response = requests.post(webhook_url, data=json.dumps(message), headers=headers)
-        # response2 = requests.post(webhook_url2, data=json.dumps(message), headers=headers)
+        response = requests.post(webhook_url, data=json.dumps(message), headers=headers)
+        response2 = requests.post(webhook_url2, data=json.dumps(message), headers=headers)
         response3 = requests.post(webhook_url3, data=json.dumps(message), headers=headers)
 
-        # if response.status_code == 200:
-        #     print("✓ 钉钉通知1发送成功!")
-        # else:
-        #     print(f"✗ 钉钉通知1发送失败，状态码: {response.status_code}, 错误信息: {response.text}")
-        #
-        # if response2.status_code == 200:
-        #     print("✓ 钉钉通知2发送成功!")
-        # else:
-        #     print(f"✗ 钉钉通知2发送失败，状态码: {response2.status_code}, 错误信息: {response2.text}")
+        if response.status_code == 200:
+            print("✓ 钉钉通知1发送成功!")
+        else:
+            print(f"✗ 钉钉通知1发送失败，状态码: {response.status_code}, 错误信息: {response.text}")
+        
+        if response2.status_code == 200:
+            print("✓ 钉钉通知2发送成功!")
+        else:
+            print(f"✗ 钉钉通知2发送失败，状态码: {response2.status_code}, 错误信息: {response2.text}")
 
         if response3.status_code == 200:
             print("✓ 钉钉通知3发送成功!")
