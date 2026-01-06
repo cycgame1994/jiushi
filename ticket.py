@@ -1,10 +1,8 @@
 import random
 import json
-from datetime import datetime
+from datetime import datetime, time as dt_time
 import aiohttp
 import asyncio
-
-
 import requests
 from config import (
     url,
@@ -28,6 +26,28 @@ from config import (
     paramse,
     paramsc,
 )
+from proxy_config import get_proxy_dict, proxy_updater_task, force_refresh_proxy
+
+"""
+1.增加代理ip,轮询请求网址 √
+2.增加每天定时启动，关闭发送请求 √
+3.监控到有票后，增加请求频率，平时请求间隔大。
+4.增加统计功能，监控到有票后，统计每一种票的库存数量，发送到钉钉消息
+5.失败重试机制，每5次失败发送推送消息到ios的bark
+6.按照a,j,d,b,h,k,e,c的顺序请求，每一轮发送钉钉消息，而不是每一次请求发一次，并且消息中带有时间戳
+7，为后续和手机的autox自动抢票做准备，检测到有票后，发送websocket信息给手机的autox
+"""
+# 运行状态控制
+is_running = False  # 全局运行标志
+running_lock: asyncio.Lock = None  # 运行状态锁
+
+
+def get_running_lock():
+    """获取或创建运行状态锁"""
+    global running_lock
+    if running_lock is None:
+        running_lock = asyncio.Lock()
+    return running_lock
 
 # 请求计数器（按通道区分）
 account_a = 0
@@ -80,10 +100,22 @@ def send_dingdingbot(tickets_info):
 
 # 请求
 async def async_post_request(session, headers, params, account_counter):
-    flag = True
-    while flag:
+    global is_running
+    while True:
+        # 检查运行状态（先快速检查，避免频繁获取锁）
+        if not is_running:
+            async with get_running_lock():
+                # 再次确认状态（双重检查）
+                if not is_running:
+                    print(f"[{datetime.now().strftime('%H:%M:%S')}] 程序已暂停，等待启动时间...")
+                    await asyncio.sleep(60)  # 暂停时每分钟检查一次
+                    continue
         try:
-            async with session.get(url, headers=headers, params=params, ssl=False) as response:
+            # 获取当前代理配置
+            proxy_dict = await get_proxy_dict()
+            # 使用代理发送请求（如果代理可用）
+            proxy_url = proxy_dict.get("http") if proxy_dict else None
+            async with session.get(url, headers=headers, params=params, proxy=proxy_url, ssl=False) as response:
                 if response.status == 200:
                     account_counter += 1
                     # request_type = 'b' if headers == headersb else 'k'
@@ -116,21 +148,99 @@ async def async_post_request(session, headers, params, account_counter):
                         priceInfoModelList = showSessionModelList[i]['priceInfoModelList']
                         for priceInfoMode in priceInfoModelList:
                             if priceInfoMode['stock'] == 1:
-                                priceName = priceInfoMode['priceName']
+                                # 去掉价格后面的/及其后内容，仅保留斜杠前部分
+                                priceName = priceInfoMode['priceName'].split('/', 1)[0].strip()
                                 print(priceName)
                                 send_dingdingbot(priceName)
                 else:
                     print(f"请求失败，状态码：{response.status}")
+                    # 请求失败时强制刷新代理
+                    print("请求失败，正在重新获取代理IP...")
+                    await force_refresh_proxy()
 
-            await asyncio.sleep(random.randint(30, 50))
+            await asyncio.sleep(random.randint(5, 8))
             # time.sleep(random.randint(1, 5))
+        except aiohttp.ClientError as e:
+            # 代理相关错误（408超时、502、503等）
+            error_msg = str(e)
+            print(f"代理请求错误：{error_msg}")
+            # 强制刷新代理
+            print("检测到代理错误，正在重新获取代理IP...")
+            await force_refresh_proxy()
+            await asyncio.sleep(random.randint(2, 4))
         except Exception as e:
             print(f"发生错误：{e}")
+            # 其他错误也尝试刷新代理
+            await force_refresh_proxy()
             await asyncio.sleep(random.randint(1, 5))
+
+
+# 定时控制任务
+async def schedule_controller():
+    """
+    定时控制任务：每天0点关闭，6点启动
+    """
+    global is_running
+    
+    def should_be_running():
+        """判断当前时间是否应该在运行
+        运行时间：早上6:00:00 到 晚上23:59:59
+        关闭时间：凌晨0:00:00 到 早上5:59:59
+        """
+        now = datetime.now()
+        current_time = now.time()
+        start_time = dt_time(6, 0, 0)   # 6:00:00
+        end_time = dt_time(23, 59, 59)  # 23:59:59
+        
+        # 6点到23:59:59之间运行
+        return start_time <= current_time <= end_time
+    
+    # 初始化运行状态
+    async with get_running_lock():
+        is_running = should_be_running()
+        if is_running:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序启动：当前时间在运行时段内")
+        else:
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序暂停：等待早上6点启动")
+    
+    while True:
+        try:
+            await asyncio.sleep(60)  # 每分钟检查一次
+            
+            now = datetime.now()
+            current_time = now.time()
+            should_run = should_be_running()
+            
+            async with get_running_lock():
+                if should_run and not is_running:
+                    # 启动
+                    is_running = True
+                    print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] ✅ 程序启动：开始发送请求和更新代理")
+                elif not should_run and is_running:
+                    # 关闭
+                    is_running = False
+                    print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] ⏸️ 程序暂停：停止发送请求和更新代理")
+        except Exception as e:
+            print(f"定时控制任务错误: {e}")
+            await asyncio.sleep(10)
 
 
 # 主函数
 async def main():
+    global is_running
+    
+    # 启动定时控制任务
+    schedule_task = asyncio.create_task(schedule_controller())
+    
+    # 等待一下，让定时控制器初始化
+    await asyncio.sleep(1)
+    
+    # 启动代理更新后台任务（传入运行状态检查函数）
+    def get_running_status():
+        return is_running
+    
+    proxy_task = asyncio.create_task(proxy_updater_task(get_running_status))
+    
     async with aiohttp.ClientSession() as session:
         tasks = [
             async_post_request(session, headersa, paramsa, account_a),
@@ -142,7 +252,7 @@ async def main():
             async_post_request(session, headerse, paramse, account_e),
             async_post_request(session, headersc, paramsc, account_c),
         ]
-        await asyncio.gather(*tasks)
+        await asyncio.gather(*tasks, proxy_task, schedule_task)
 
 
 if __name__ == '__main__':
