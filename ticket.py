@@ -59,14 +59,67 @@ account_k = 0
 account_e = 0
 account_c = 0
 
+# 统计功能：每天每个sku的放票数量
+daily_stats = {}  # {sku: count}
+current_date = datetime.now().date()  # 当前日期
+stats_lock: asyncio.Lock = None  # 统计锁
+
+def get_stats_lock():
+    """获取或创建统计锁"""
+    global stats_lock
+    if stats_lock is None:
+        stats_lock = asyncio.Lock()
+    return stats_lock
+
+async def reset_daily_stats():
+    """重置每日统计"""
+    global daily_stats, current_date
+    async with get_stats_lock():
+        daily_stats = {}
+        current_date = datetime.now().date()
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 📊 每日统计已重置")
+
+async def update_daily_stats(price_names):
+    """更新每日统计"""
+    global daily_stats, current_date
+    now = datetime.now()
+    today = now.date()
+    
+    async with get_stats_lock():
+        # 如果日期变化，重置统计
+        if today != current_date:
+            daily_stats = {}
+            current_date = today
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 📊 每日统计已重置（日期变化）")
+        
+        # 更新统计
+        for price_name in price_names:
+            daily_stats[price_name] = daily_stats.get(price_name, 0) + 1
+
+async def get_stats_message():
+    """获取统计信息文本"""
+    async with get_stats_lock():
+        if not daily_stats:
+            return "📊 今日统计：暂无数据"
+        
+        stats_lines = ["📊 今日统计："]
+        for sku, count in sorted(daily_stats.items()):
+            stats_lines.append(f"  {sku}: {count}次")
+        return "\n".join(stats_lines)
+
 # 发送钉钉通知
-def send_dingdingbot(tickets_info):
+def send_dingdingbot(tickets_info, stats_info=""):
     """发送合并后的有票信息到钉钉"""
     # 组装消息体
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    content = f"🎫 有票通知\n⏰ {timestamp}\n\n{tickets_info}"
+    if stats_info:
+        content += f"\n\n{stats_info}"
+    
     message = {
         "msgtype": "text",  # 消息类型
         "text": {
-            "content": f"🎫 有票通知\n{tickets_info}"
+            "content": content
         }
     }
 
@@ -144,14 +197,31 @@ async def async_post_request(session, headers, params, account_counter):
                     print("请求成功！返回数据：", datetime.now().strftime("%m-%d %H:%M:%S"))
                     data1 = json.loads(data)
                     showSessionModelList = data1['data']['showSessionModelList']
+                    
+                    # 收集本次请求中所有有库存的priceName
+                    available_tickets = []
                     for i in range(len(showSessionModelList)):
                         priceInfoModelList = showSessionModelList[i]['priceInfoModelList']
                         for priceInfoMode in priceInfoModelList:
                             if priceInfoMode['stock'] == 1:
                                 # 去掉价格后面的/及其后内容，仅保留斜杠前部分
                                 priceName = priceInfoMode['priceName'].split('/', 1)[0].strip()
+                                available_tickets.append(priceName)
                                 print(priceName)
-                                send_dingdingbot(priceName)
+                    
+                    # 如果有库存，合并发送消息并更新统计
+                    if available_tickets:
+                        # 用制表位（Tab）分隔所有有票信息
+                        tickets_info = "\t".join(available_tickets)
+                        
+                        # 更新每日统计
+                        await update_daily_stats(available_tickets)
+                        
+                        # 获取统计信息
+                        stats_info = await get_stats_message()
+                        
+                        # 发送合并后的消息
+                        send_dingdingbot(tickets_info, stats_info)
                 else:
                     print(f"请求失败，状态码：{response.status}")
                     # 请求失败时强制刷新代理
@@ -178,9 +248,9 @@ async def async_post_request(session, headers, params, account_counter):
 # 定时控制任务
 async def schedule_controller():
     """
-    定时控制任务：每天0点关闭，6点启动
+    定时控制任务：每天0点关闭，6点启动，并在新的一天重置统计
     """
-    global is_running
+    global is_running, current_date
     
     def should_be_running():
         """判断当前时间是否应该在运行
@@ -195,21 +265,30 @@ async def schedule_controller():
         # 8点到23:00:00之间运行 0点到7:59:59之间关闭
         return start_time <= current_time <= end_time
     
-    # 初始化运行状态
+    # 初始化运行状态和统计
     async with get_running_lock():
         is_running = should_be_running()
         if is_running:
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序启动：当前时间在运行时段内")
         else:
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序暂停：等待早上6点启动")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序暂停：等待早上8点启动")
+    
+    # 初始化统计（在事件循环中调用）
+    await reset_daily_stats()
     
     while True:
         try:
             await asyncio.sleep(60)  # 每分钟检查一次
             
             now = datetime.now()
+            today = now.date()
             current_time = now.time()
             should_run = should_be_running()
+            
+            # 检查日期变化，重置统计
+            async with get_stats_lock():
+                if today != current_date:
+                    await reset_daily_stats()
             
             async with get_running_lock():
                 if should_run and not is_running:
