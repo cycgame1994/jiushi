@@ -184,15 +184,15 @@ async def schedule_controller():
     
     def should_be_running():
         """判断当前时间是否应该在运行
-        运行时间：早上6:00:00 到 晚上23:59:59
-        关闭时间：凌晨0:00:00 到 早上5:59:59
+        运行时间：早上8:00:00 到 晚上23:00:00
+        关闭时间：凌晨0:00:00 到 早上7:59:59
         """
         now = datetime.now()
         current_time = now.time()
-        start_time = dt_time(8, 0, 0)   # 6:00:00
-        end_time = dt_time(23, 00, 00)  # 23:59:59
-        
-        # 6点到23:59:59之间运行
+        start_time = dt_time(8, 0, 0)   # 8:00:00
+        end_time = dt_time(23, 00, 00)  # 23:00:00
+
+        # 8点到23:00:00之间运行 0点到7:59:59之间关闭
         return start_time <= current_time <= end_time
     
     # 初始化运行状态
