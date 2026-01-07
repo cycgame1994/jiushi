@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Optional, Tuple
 
 # 代理IP获取接口（需要替换为实际接口地址）
-PROXY_API_URL = "https://share.proxy.qg.net/get?key=BCAA9684&num=1"  # 请替换为实际的代理IP接口地址
+PROXY_API_URL = "https://share.proxy.qg.net/get?key=BCAA9684&distinct=true"  # 请替换为实际的代理IP接口地址
 
 # 代理认证信息
 PROXY_USERNAME = "BCAA9684"
@@ -81,7 +81,7 @@ async def get_proxy(force_refresh: bool = False) -> Optional[str]:
         # 检查是否需要更新代理（每55秒更新一次）
         now = datetime.now()
         need_update = force_refresh or _current_proxy is None or _last_update_time is None or \
-           (now - _last_update_time).total_seconds() >= 55
+           (now - _last_update_time).total_seconds() >= 58
         
         if need_update:
             print(f"[{now.strftime('%H:%M:%S')}] 正在更新代理IP...")
@@ -144,7 +144,7 @@ async def proxy_updater_task(is_running_flag):
                 await asyncio.sleep(60)  # 暂停时每分钟检查一次
                 continue
             
-            await asyncio.sleep(55)  # 等待55秒
+            await asyncio.sleep(58)  # 等待55秒
             await get_proxy()  # 更新代理
         except Exception as e:
             print(f"代理更新任务错误: {e}")

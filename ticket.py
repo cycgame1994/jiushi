@@ -189,8 +189,8 @@ async def schedule_controller():
         """
         now = datetime.now()
         current_time = now.time()
-        start_time = dt_time(6, 0, 0)   # 6:00:00
-        end_time = dt_time(23, 59, 59)  # 23:59:59
+        start_time = dt_time(8, 0, 0)   # 6:00:00
+        end_time = dt_time(23, 00, 00)  # 23:59:59
         
         # 6点到23:59:59之间运行
         return start_time <= current_time <= end_time
