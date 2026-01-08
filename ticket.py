@@ -113,8 +113,8 @@ def send_dingdingbot(tickets_info, stats_info=""):
     # 组装消息体
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     content = f"🎫 有票通知\n⏰ {timestamp}\n\n{tickets_info}"
-    if stats_info:
-        content += f"\n\n{stats_info}"
+    # if stats_info:
+    #     content += f"\n\n{stats_info}"
     
     message = {
         "msgtype": "text",  # 消息类型
@@ -259,7 +259,7 @@ async def schedule_controller():
         """
         now = datetime.now()
         current_time = now.time()
-        start_time = dt_time(8, 0, 0)   # 8:00:00
+        start_time = dt_time(9, 34, 0)   # 8:00:00
         end_time = dt_time(23, 00, 00)  # 23:00:00
 
         # 8点到23:00:00之间运行 0点到7:59:59之间关闭
