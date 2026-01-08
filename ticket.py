@@ -42,7 +42,7 @@ is_running = False  # 全局运行标志
 running_lock: asyncio.Lock = None  # 运行状态锁
 
 # 定时配置
-START_TIME = dt_time(22, 32, 0)  # 启动时间
+START_TIME = dt_time(7, 0, 0)  # 启动时间
 END_TIME = dt_time(23, 0, 0)    # 结束时间
 STATS_TIME = dt_time(22, 0, 0)  # 统计消息发送时间
 
@@ -287,7 +287,7 @@ async def async_post_request(session, headers, params, account_counter):
 # 定时控制任务
 async def schedule_controller():
     """
-    定时控制任务：每天0点关闭，6点启动，并在新的一天重置统计
+    定时控制任务：每天0点关闭，7点启动，并在新的一天重置统计
     每天22点发送每日统计消息
     """
     global is_running, current_date
@@ -309,7 +309,7 @@ async def schedule_controller():
         if is_running:
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序启动：当前时间在运行时段内")
         else:
-            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序暂停：等待早上8点启动")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序暂停：等待早上启动")
     
     # 初始化统计（在事件循环中调用）
     await reset_daily_stats()
