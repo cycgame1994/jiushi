@@ -356,10 +356,13 @@ async def schedule_controller():
                     await asyncio.sleep(1)
                     continue
             
-            # 检查日期变化，重置统计
+            # 检查日期变化，重置统计（避免死锁：直接在锁内重置，不调用函数）
             async with get_stats_lock():
                 if today != current_date:
-                    await reset_daily_stats()
+                    global daily_stats, current_date
+                    daily_stats = {}
+                    current_date = today
+                    print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 📊 每日统计已重置（日期变化）")
                     last_stats_sent_date = None  # 重置统计发送日期
             
             # 检查是否到了统计消息发送时间，发送每日统计消息
