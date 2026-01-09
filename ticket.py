@@ -290,7 +290,7 @@ async def schedule_controller():
     定时控制任务：每天0点关闭，7点启动，并在新的一天重置统计
     每天22点发送每日统计消息
     """
-    global is_running, current_date
+    global is_running, current_date, daily_stats
     
     def should_be_running():
         """判断当前时间是否应该在运行
@@ -359,7 +359,6 @@ async def schedule_controller():
             # 检查日期变化，重置统计（避免死锁：直接在锁内重置，不调用函数）
             async with get_stats_lock():
                 if today != current_date:
-                    global daily_stats, current_date
                     daily_stats = {}
                     current_date = today
                     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 📊 每日统计已重置（日期变化）")
