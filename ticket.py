@@ -158,7 +158,7 @@ async def send_daily_stats_to_dingding():
     """发送每日统计消息到钉钉"""
     stats_info = await get_stats_message()
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    content = f"📊 每日统计报告\n⏰ {timestamp}\n\n{stats_info}"
+    content = f"📊 每日有票统计报告\n⏰ {timestamp}\n\n{stats_info}"
     
     message = {
         "msgtype": "text",
