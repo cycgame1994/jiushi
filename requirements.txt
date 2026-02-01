@@ -6,5 +6,5 @@
 # pip freeze > requirements.txt
 
 # 网络请求依赖
-aiohttp>=3.10.10
-requests>=2.32.3
+curl_cffi>=0.5.10  # 用于浏览器指纹模拟的异步HTTP客户端
+requests>=2.32.3   # 用于钉钉通知等同步请求

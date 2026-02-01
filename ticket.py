@@ -1,30 +1,29 @@
 import random
 import json
 from datetime import datetime, time as dt_time
-import aiohttp
+from curl_cffi.requests import AsyncSession
 import asyncio
 import requests
 from config import (
-    url,
+    url_a,
+    url_j,
+    url_b,
+    url_h,
+    url_k,
+    url_e,
+    url_c,
     webhook_url,
     webhook_url2,
     webhook_url3,
     headersa,
     headersj,
-    headersd,
     headersb,
     headersh,
     headersk,
     headerse,
     headersc,
-    paramsa,
-    paramsj,
-    paramsd,
-    paramsb,
-    paramsh,
-    paramsk,
-    paramse,
-    paramsc,
+    cookies,
+    
 )
 from proxy_config import get_proxy_dict, proxy_updater_task, force_refresh_proxy
 
@@ -53,15 +52,24 @@ def get_running_lock():
         running_lock = asyncio.Lock()
     return running_lock
 
-# 请求计数器（按通道区分）
-account_a = 0
-account_j = 0
-account_d = 0
-account_b = 0
-account_h = 0
-account_k = 0
-account_e = 0
-account_c = 0
+# 请求计数器（按通道区分）- 使用字典存储
+account_counters = {
+    'a': 0,
+    'j': 0,
+    'b': 0,
+    'h': 0,
+    'k': 0,
+    'e': 0,
+    'c': 0
+}
+account_lock: asyncio.Lock = None  # 计数器锁
+
+def get_account_lock():
+    """获取或创建计数器锁"""
+    global account_lock
+    if account_lock is None:
+        account_lock = asyncio.Lock()
+    return account_lock
 
 # 统计功能：每天每个sku的放票数量
 daily_stats = {}  # {sku: count}
@@ -196,8 +204,8 @@ async def send_daily_stats_to_dingding():
 
 
 # 请求
-async def async_post_request(session, headers, params, account_counter):
-    global is_running
+async def async_post_request(session, headers, url, request_type):
+    global is_running, account_counters
     while True:
         # 检查运行状态（快速检查，不获取锁）
         if not is_running:
@@ -207,80 +215,69 @@ async def async_post_request(session, headers, params, account_counter):
         try:
             # 获取当前代理配置
             proxy_dict = await get_proxy_dict()
-            # 使用代理发送请求（如果代理可用）
+            # curl_cffi 使用字符串格式的代理URL
             proxy_url = proxy_dict.get("http") if proxy_dict else None
-            async with session.get(url, headers=headers, params=params, proxy=proxy_url, ssl=False) as response:
-                if response.status == 200:
-                    account_counter += 1
-                    # request_type = 'b' if headers == headersb else 'k'
-                    if headers == headersa:
-                        request_type = 'a'
-                    elif headers == headersj:
-                        request_type = 'j'
-                    elif headers == headersd:
-                        request_type = 'd'
-                    elif headers == headersb:
-                        request_type = 'b'
-                    elif headers == headersh:
-                        request_type = 'h'
-                    elif headers == headersk:
-                        request_type = 'k'
-                    elif headers == headerse:
-                        request_type = 'e'
-                    elif headers == headersc:
-                        request_type = 'c'
-                    else:
-                        request_type = '?'
+            
+            # 使用 curl_cffi 的异步请求
+            response = await session.get(
+                url, 
+                headers=headers, 
+                cookies=cookies,
+                proxy=proxy_url,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                # 更新对应渠道的计数器（使用锁保证线程安全）
+                async with get_account_lock():
+                    account_counters[request_type] += 1
+                    current_count = account_counters[request_type]
 
-                    print(f'{request_type}请求了{account_counter}次')
+                print(f'{request_type} 请求了 {current_count} 次')
+                
 
-                    data = await response.text()
-                    print("请求成功！返回数据：", datetime.now().strftime("%m-%d %H:%M:%S"))
-                    data1 = json.loads(data)
-                    showSessionModelList = data1['data']['showSessionModelList']
+                # curl_cffi 的响应对象，text 是属性不是方法
+                data = response.text
+                print("请求成功！返回数据：", datetime.now().strftime("%m-%d %H:%M:%S"))
+                data1 = json.loads(data)
+                showSessionModelList = data1['data']['showSessionModelList']
+                
+                # 收集本次请求中所有有库存的priceName
+                available_tickets = []
+                for i in range(len(showSessionModelList)):
+                    priceInfoModelList = showSessionModelList[i]['priceInfoModelList']
+                    for priceInfoMode in priceInfoModelList:
+                        if priceInfoMode['stock'] == 1:
+                            # 去掉价格后面的/及其后内容，仅保留斜杠前部分
+                            priceName = priceInfoMode['priceName'].split('/', 1)[0].strip()
+                            available_tickets.append(priceName)
+                            print(priceName)
+                
+                # 如果有库存，合并发送消息并更新统计
+                if available_tickets:
+                    # 用制表位（Tab）分隔所有有票信息
+                    tickets_info = "\t".join(available_tickets)
                     
-                    # 收集本次请求中所有有库存的priceName
-                    available_tickets = []
-                    for i in range(len(showSessionModelList)):
-                        priceInfoModelList = showSessionModelList[i]['priceInfoModelList']
-                        for priceInfoMode in priceInfoModelList:
-                            if priceInfoMode['stock'] == 1:
-                                # 去掉价格后面的/及其后内容，仅保留斜杠前部分
-                                priceName = priceInfoMode['priceName'].split('/', 1)[0].strip()
-                                available_tickets.append(priceName)
-                                print(priceName)
+                    # 更新每日统计
+                    await update_daily_stats(available_tickets)
                     
-                    # 如果有库存，合并发送消息并更新统计
-                    if available_tickets:
-                        # 用制表位（Tab）分隔所有有票信息
-                        tickets_info = "\t".join(available_tickets)
-                        
-                        # 更新每日统计
-                        await update_daily_stats(available_tickets)
-                        
-                        # 发送合并后的消息（不包含统计信息）
-                        send_dingdingbot(tickets_info)
-                else:
-                    print(f"请求失败，状态码：{response.status}")
-                    # 请求失败时强制刷新代理
-                    print("请求失败，正在重新获取代理IP...")
-                    await force_refresh_proxy()
+                    # 发送合并后的消息（不包含统计信息）
+                    send_dingdingbot(tickets_info)
+            else:
+                print(f"请求失败，状态码：{response.status_code}")
+                # 请求失败时强制刷新代理
+                print("请求失败，正在重新获取代理IP...")
+                await force_refresh_proxy()
 
             await asyncio.sleep(random.randint(5, 8))
-            # time.sleep(random.randint(1, 5))
-        except aiohttp.ClientError as e:
-            # 代理相关错误（408超时、502、503等）
+        except Exception as e:
+            # curl_cffi 的异常处理（统一处理所有异常）
             error_msg = str(e)
-            print(f"代理请求错误：{error_msg}")
+            print(f"请求错误：{error_msg}")
             # 强制刷新代理
-            print("检测到代理错误，正在重新获取代理IP...")
+            print("检测到请求错误，正在重新获取代理IP...")
             await force_refresh_proxy()
             await asyncio.sleep(random.randint(2, 4))
-        except Exception as e:
-            print(f"发生错误：{e}")
-            # 其他错误也尝试刷新代理
-            await force_refresh_proxy()
-            await asyncio.sleep(random.randint(1, 5))
 
 
 # 定时控制任务
@@ -401,20 +398,22 @@ async def main():
     
     proxy_task = asyncio.create_task(proxy_updater_task(get_running_status))
     
-    async with aiohttp.ClientSession() as session:
+    # 使用 curl_cffi 的异步会话，添加浏览器指纹模拟
+    # 可选值: chrome99, chrome100, chrome101, chrome104, chrome107, chrome110, chrome116, chrome119, chrome120, chrome123, edge99, edge101, safari15_3, safari15_5
+    async with AsyncSession(impersonate="chrome123") as session:
         tasks = [
-            async_post_request(session, headersa, paramsa, account_a),
-            async_post_request(session, headersj, paramsj, account_j),
-            async_post_request(session, headersd, paramsd, account_d),
-            async_post_request(session, headersb, paramsb, account_b),
-            async_post_request(session, headersh, paramsh, account_h),
-            async_post_request(session, headersk, paramsk, account_k),
-            async_post_request(session, headerse, paramse, account_e),
-            async_post_request(session, headersc, paramsc, account_c),
+            async_post_request(session, headersa, url_a, 'a'),
+            async_post_request(session, headersj, url_j, 'j'),
+            async_post_request(session, headersb, url_b, 'b'),
+            async_post_request(session, headersh, url_h, 'h'),
+            async_post_request(session, headersk, url_k, 'k'),
+            async_post_request(session, headerse, url_e, 'e'),
+            async_post_request(session, headersc, url_c, 'c'),
         ]
         await asyncio.gather(*tasks, proxy_task, schedule_task)
 
 
 if __name__ == '__main__':
     asyncio.run(main())
+
 
