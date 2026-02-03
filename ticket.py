@@ -71,6 +71,101 @@ def get_account_lock():
         account_lock = asyncio.Lock()
     return account_lock
 
+# 代理刷新策略：同一渠道连续失败 3 次才触发刷新；刷新由后台任务合并/去重执行
+FAILURES_TO_REFRESH = 3
+consecutive_failures = {k: 0 for k in account_counters.keys()}
+failures_lock: asyncio.Lock = None
+
+refresh_queue: asyncio.Queue = None  # 触发刷新代理的队列（合并/去重）
+refresh_in_progress = False
+refresh_state_lock: asyncio.Lock = None
+
+
+def get_failures_lock():
+    """获取或创建失败计数锁"""
+    global failures_lock
+    if failures_lock is None:
+        failures_lock = asyncio.Lock()
+    return failures_lock
+
+
+def get_refresh_queue():
+    """获取或创建刷新队列（容量1，用于合并多个刷新请求）"""
+    global refresh_queue
+    if refresh_queue is None:
+        refresh_queue = asyncio.Queue(maxsize=1)
+    return refresh_queue
+
+
+def get_refresh_state_lock():
+    """获取或创建刷新状态锁"""
+    global refresh_state_lock
+    if refresh_state_lock is None:
+        refresh_state_lock = asyncio.Lock()
+    return refresh_state_lock
+
+
+async def record_success(request_type: str):
+    """记录一次成功：清空该渠道连续失败计数"""
+    async with get_failures_lock():
+        consecutive_failures[request_type] = 0
+
+
+async def record_failure_and_maybe_trigger_refresh(request_type: str, reason: str = ""):
+    """记录一次失败；若该渠道连续失败达到阈值则触发刷新请求（不阻塞）"""
+    async with get_failures_lock():
+        consecutive_failures[request_type] = consecutive_failures.get(request_type, 0) + 1
+        fail_count = consecutive_failures[request_type]
+
+    if fail_count >= FAILURES_TO_REFRESH:
+        # 触发刷新请求：只入队一次（队列容量1，自动合并/去重）
+        q = get_refresh_queue()
+        try:
+            q.put_nowait((request_type, fail_count, reason, datetime.now()))
+        except asyncio.QueueFull:
+            # 已经有待处理的刷新请求了，直接合并（忽略）
+            pass
+
+
+async def proxy_refresh_worker():
+    """后台任务：合并/去重地执行代理刷新"""
+    global refresh_in_progress
+    q = get_refresh_queue()
+    while True:
+        request_type, fail_count, reason, ts = await q.get()
+
+        # drain：合并队列里可能积累的触发（容量1通常无需，但保留以防未来调整）
+        while True:
+            try:
+                _ = q.get_nowait()
+                q.task_done()
+            except asyncio.QueueEmpty:
+                break
+
+        async with get_refresh_state_lock():
+            if refresh_in_progress:
+                q.task_done()
+                continue
+            refresh_in_progress = True
+
+        try:
+            reason_str = f"，原因: {reason}" if reason else ""
+            print(
+                f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] [PROXY] 触发刷新（渠道 {request_type} 连续失败 {fail_count} 次{reason_str}）"
+            )
+            await force_refresh_proxy()
+
+            # 刷新成功后：将所有渠道的连续失败清零（避免旧失败导致立刻再次触发）
+            async with get_failures_lock():
+                for k in consecutive_failures.keys():
+                    consecutive_failures[k] = 0
+        except Exception as e:
+            print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] [PROXY] 刷新代理失败: {e}")
+        finally:
+            async with get_refresh_state_lock():
+                refresh_in_progress = False
+            q.task_done()
+
 # 统计功能：每天每个sku的放票数量
 daily_stats = {}  # {sku: count}
 current_date = datetime.now().date()  # 当前日期
@@ -227,6 +322,7 @@ async def async_post_request(session, headers, url, request_type):
             )
             
             if response.status_code == 200:
+                await record_success(request_type)
                 # 更新对应渠道的计数器（使用锁保证线程安全）
                 async with get_account_lock():
                     account_counters[request_type] += 1
@@ -272,18 +368,16 @@ async def async_post_request(session, headers, url, request_type):
                     asyncio.create_task(send_dingdingbot_async(tickets_info))
             else:
                 print(f"请求失败，状态码：{response.status_code}")
-                # 请求失败时强制刷新代理
-                print("请求失败，正在重新获取代理IP...")
-                await force_refresh_proxy()
+                await record_failure_and_maybe_trigger_refresh(
+                    request_type, reason=f"HTTP {response.status_code}"
+                )
 
             await asyncio.sleep(random.randint(5, 8))
         except Exception as e:
             # curl_cffi 的异常处理（统一处理所有异常）
             error_msg = str(e)
-            print(f"请求错误：{error_msg}")
-            # 强制刷新代理
-            print("检测到请求错误，正在重新获取代理IP...")
-            await force_refresh_proxy()
+            print(f"{request_type} 请求错误：{error_msg}")
+            await record_failure_and_maybe_trigger_refresh(request_type, reason=error_msg)
             await asyncio.sleep(random.randint(2, 4))
 
 
@@ -404,6 +498,8 @@ async def main():
         return is_running
     
     proxy_task = asyncio.create_task(proxy_updater_task(get_running_status))
+    # 启动代理刷新后台任务：合并/去重执行 force_refresh_proxy()
+    refresh_worker_task = asyncio.create_task(proxy_refresh_worker())
     
     # 使用 curl_cffi 的异步会话，添加浏览器指纹模拟
     # 可选值: chrome99, chrome100, chrome101, chrome104, chrome107, chrome110, chrome116, chrome119, chrome120, chrome123, edge99, edge101, safari15_3, safari15_5
@@ -417,7 +513,7 @@ async def main():
             async_post_request(session, headerse, url_e, 'e'),
             async_post_request(session, headersc, url_c, 'c'),
         ]
-        await asyncio.gather(*tasks, proxy_task, schedule_task)
+        await asyncio.gather(*tasks, proxy_task, schedule_task, refresh_worker_task)
 
 
 if __name__ == '__main__':
