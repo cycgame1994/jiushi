@@ -40,7 +40,7 @@ is_running = False  # 全局运行标志
 running_lock: asyncio.Lock = None  # 运行状态锁
 
 # 定时配置
-START_TIME = dt_time(7, 0, 0)  # 启动时间
+START_TIME = dt_time(8, 0, 0)  # 启动时间
 END_TIME = dt_time(23, 0, 0)    # 结束时间
 STATS_TIME = dt_time(22, 0, 0)  # 统计消息发送时间
 
@@ -72,7 +72,7 @@ def get_account_lock():
     return account_lock
 
 # 代理刷新策略：同一渠道连续失败 3 次才触发刷新；刷新由后台任务合并/去重执行
-FAILURES_TO_REFRESH = 3
+FAILURES_TO_REFRESH = 2
 consecutive_failures = {k: 0 for k in account_counters.keys()}
 failures_lock: asyncio.Lock = None
 
