@@ -119,9 +119,9 @@ async def get_stats_message():
             stats_lines.append(f"  {sku}: {count}次")
         return "\n".join(stats_lines)
 
-# 发送钉钉通知
-def send_dingdingbot(tickets_info):
-    """发送合并后的有票信息到钉钉"""
+# 发送钉钉通知（异步版本，不阻塞主循环）
+async def send_dingdingbot_async(tickets_info):
+    """异步发送合并后的有票信息到钉钉，不阻塞主循环"""
     # 组装消息体 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     content = f"{tickets_info} \n有票通知\n⏰ {timestamp}\n\n"
@@ -137,26 +137,25 @@ def send_dingdingbot(tickets_info):
         "Content-Type": "application/json"
     }
 
-    # 发送POST请求到钉钉机器人接口
+    # 使用异步会话发送请求（不阻塞主循环）
     try:
-        response = requests.post(webhook_url, data=json.dumps(message), headers=headers)
-        response2 = requests.post(webhook_url2, data=json.dumps(message), headers=headers)
-        response3 = requests.post(webhook_url3, data=json.dumps(message), headers=headers)
-
-        if response.status_code == 200:
-            print("✓ 钉钉通知1发送成功!")
-        else:
-            print(f"✗ 钉钉通知1发送失败，状态码: {response.status_code}, 错误信息: {response.text}")
-        
-        if response2.status_code == 200:
-            print("✓ 钉钉通知2发送成功!")
-        else:
-            print(f"✗ 钉钉通知2发送失败，状态码: {response2.status_code}, 错误信息: {response2.text}")
-
-        if response3.status_code == 200:
-            print("✓ 钉钉通知3发送成功!")
-        else:
-            print(f"✗ 钉钉通知3发送失败，状态码: {response3.status_code}, 错误信息: {response3.text}")
+        async with AsyncSession() as notify_session:
+            # 并发发送到3个钉钉机器人
+            tasks = [
+                notify_session.post(webhook_url, json=message, headers=headers, timeout=10),
+                notify_session.post(webhook_url2, json=message, headers=headers, timeout=10),
+                notify_session.post(webhook_url3, json=message, headers=headers, timeout=10),
+            ]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            
+            # 检查结果（快速处理，不阻塞）
+            for i, result in enumerate(results, 1):
+                if isinstance(result, Exception):
+                    print(f"✗ 钉钉通知{i}发送异常: {result}")
+                elif result.status_code == 200:
+                    print(f"✓ 钉钉通知{i}发送成功!")
+                else:
+                    print(f"✗ 钉钉通知{i}发送失败，状态码: {result.status_code}")
     except Exception as e:
         print(f"发送钉钉消息时发生错误: {e}")
 
@@ -238,31 +237,31 @@ async def async_post_request(session, headers, url, request_type):
 
                 # curl_cffi 的响应对象，text 是属性不是方法
                 data = response.text
-                print("请求成功！返回数据：", datetime.now().strftime("%m-%d %H:%M:%S"))
+                print(f"请求成功！返回数据：{datetime.now().strftime('%m-%d %H:%M:%S')}")
                 data1 = json.loads(data)
-                showSessionModelList = data1['data']['showSessionModelList']
+                showSessionModelList = data1.get('data', {}).get('showSessionModelList', [])
                 
-                # 收集本次请求中所有有库存的priceName
-                available_tickets = []
-                for i in range(len(showSessionModelList)):
-                    priceInfoModelList = showSessionModelList[i]['priceInfoModelList']
-                    for priceInfoMode in priceInfoModelList:
-                        if priceInfoMode['stock'] == 1:
-                            # 去掉价格后面的/及其后内容，仅保留斜杠前部分
-                            priceName = priceInfoMode['priceName'].split('/', 1)[0].strip()
-                            available_tickets.append(priceName)
-                            print(priceName)
+                # 收集本次请求中所有有库存的priceName（优化：使用列表推导式提高效率）
+                # 判断条件：库存大于0即认为有票（不限制必须等于1）
+                available_tickets = [
+                    priceInfoMode['priceName'].split('/', 1)[0].strip()
+                    for session_item in showSessionModelList
+                    for priceInfoMode in session_item.get('priceInfoModelList', [])
+                    if priceInfoMode.get('stock', 0) > 0
+                ]
                 
-                # 如果有库存，合并发送消息并更新统计
+                # 如果有库存，批量打印并异步处理通知（不阻塞主循环）
                 if available_tickets:
+                    # 批量打印所有有票信息（减少I/O操作，但保留日志）
+                    print(f"[{request_type}] 检测到有票: {', '.join(available_tickets)}")
+                    
                     # 用制表位（Tab）分隔所有有票信息
                     tickets_info = "\t".join(available_tickets)
                     
-                    # 更新每日统计
-                    await update_daily_stats(available_tickets)
-                    
-                    # 发送合并后的消息（不包含统计信息）
-                    send_dingdingbot(tickets_info)
+                    # 将统计更新和通知发送放到后台任务，不阻塞主循环
+                    # 使用 create_task 让这些操作在后台异步执行，主循环可以继续请求
+                    asyncio.create_task(update_daily_stats(available_tickets))
+                    asyncio.create_task(send_dingdingbot_async(tickets_info))
             else:
                 print(f"请求失败，状态码：{response.status_code}")
                 # 请求失败时强制刷新代理
