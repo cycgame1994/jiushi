@@ -241,10 +241,13 @@ async def async_post_request(session, headers, url, request_type):
                 data1 = json.loads(data)
                 showSessionModelList = data1.get('data', {}).get('showSessionModelList', [])
                 
-                # 收集本次请求中所有有库存的priceName（优化：使用列表推导式提高效率）
+                # 收集本次请求中所有有库存的priceName和库存数量
                 # 判断条件：库存大于0即认为有票（不限制必须等于1）
                 available_tickets = [
-                    priceInfoMode['priceName'].split('/', 1)[0].strip()
+                    (
+                        priceInfoMode['priceName'].split('/', 1)[0].strip(),
+                        priceInfoMode.get('stock', 0)
+                    )
                     for session_item in showSessionModelList
                     for priceInfoMode in session_item.get('priceInfoModelList', [])
                     if priceInfoMode.get('stock', 0) > 0
@@ -252,15 +255,20 @@ async def async_post_request(session, headers, url, request_type):
                 
                 # 如果有库存，批量打印并异步处理通知（不阻塞主循环）
                 if available_tickets:
-                    # 批量打印所有有票信息（减少I/O操作，但保留日志）
-                    print(f"[{request_type}] 检测到有票: {', '.join(available_tickets)}")
+                    # 格式化票务信息：priceName + 空格 + 库存 + 库存数字
+                    tickets_with_stock = [f"{name} 库存{stock}" for name, stock in available_tickets]
+                    # 只提取priceName用于统计（保持原有统计逻辑）
+                    price_names_only = [name for name, stock in available_tickets]
                     
-                    # 用制表位（Tab）分隔所有有票信息
-                    tickets_info = "\t".join(available_tickets)
+                    # 批量打印所有有票信息（包含库存，减少I/O操作，但保留日志）
+                    print(f"[{request_type}] 检测到有票: {', '.join(tickets_with_stock)}")
+                    
+                    # 用制表位（Tab）分隔所有有票信息（包含库存）
+                    tickets_info = "\t".join(tickets_with_stock)
                     
                     # 将统计更新和通知发送放到后台任务，不阻塞主循环
                     # 使用 create_task 让这些操作在后台异步执行，主循环可以继续请求
-                    asyncio.create_task(update_daily_stats(available_tickets))
+                    asyncio.create_task(update_daily_stats(price_names_only))
                     asyncio.create_task(send_dingdingbot_async(tickets_info))
             else:
                 print(f"请求失败，状态码：{response.status_code}")
