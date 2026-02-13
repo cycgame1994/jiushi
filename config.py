@@ -48,7 +48,7 @@ cookies= {
 
 
 webhook_url = "https://oapi.dingtalk.com/robot/send?access_token=bdc3b8bd0e3ebdb39df90bf67acbbf405d04b60065db1dfe37c6c8e938f52221"
-webhook_url2 = "https://oapi.dingtalk.com/robot/send?access_token=40442c548b938e2cd769e462a4f2a0a69cf9482a2deb299a154f3a1bea45c48a"
+webhook_url2 = "https://oapi.dingtalk.com/robot/send?access_token=1db293dc3b37664145df981e45ad8c1ef1d3d2574b3224fb064ff1a358c97bcf"
 webhook_url3 = "https://oapi.dingtalk.com/robot/send?access_token=61cb96708c2543536319fff172477490cfc3cccb703fa73a0d168786928054f8"
 
 
