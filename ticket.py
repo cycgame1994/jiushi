@@ -71,6 +71,53 @@ def get_account_lock():
         account_lock = asyncio.Lock()
     return account_lock
 
+# 动态请求速率控制：根据是否有票调整请求频率
+# 平时慢速请求，检测到有票后加快，30分钟后无新票恢复慢速
+ticket_detected_time = None  # 检测到有票的时间戳
+ticket_detected_lock: asyncio.Lock = None  # 有票状态锁
+SLOW_INTERVAL_MIN = 15  # 慢速请求间隔（秒）- 最小值
+SLOW_INTERVAL_MAX = 25  # 慢速请求间隔（秒）- 最大值
+FAST_INTERVAL_MIN = 5   # 快速请求间隔（秒）- 最小值（检测到有票后）
+FAST_INTERVAL_MAX = 8   # 快速请求间隔（秒）- 最大值（检测到有票后）
+TICKET_TIMEOUT = 30 * 60  # 30分钟后无新票恢复慢速（秒）
+
+def get_ticket_detected_lock():
+    """获取或创建有票状态锁"""
+    global ticket_detected_lock
+    if ticket_detected_lock is None:
+        ticket_detected_lock = asyncio.Lock()
+    return ticket_detected_lock
+
+async def mark_ticket_detected():
+    """标记检测到有票"""
+    global ticket_detected_time
+    async with get_ticket_detected_lock():
+        was_fast_mode = ticket_detected_time is not None
+        ticket_detected_time = datetime.now().timestamp()
+        if not was_fast_mode:
+            print(f"[速率控制] 🚀 检测到有票，切换到快速请求模式（间隔 {FAST_INTERVAL_MIN}-{FAST_INTERVAL_MAX} 秒）")
+        # 如果已经在快速模式，更新计时器但不打印消息（避免日志过多）
+
+async def get_request_interval():
+    """根据当前状态获取请求间隔"""
+    global ticket_detected_time
+    async with get_ticket_detected_lock():
+        if ticket_detected_time is None:
+            # 慢速模式
+            return random.randint(SLOW_INTERVAL_MIN, SLOW_INTERVAL_MAX)
+        else:
+            # 检查是否超过30分钟
+            now = datetime.now().timestamp()
+            time_since_detection = now - ticket_detected_time
+            if time_since_detection >= TICKET_TIMEOUT:
+                # 30分钟无新票，恢复慢速
+                ticket_detected_time = None
+                print(f"[速率控制] 🐢 30分钟无新票，切换到慢速请求模式（间隔 {SLOW_INTERVAL_MIN}-{SLOW_INTERVAL_MAX} 秒）")
+                return random.randint(SLOW_INTERVAL_MIN, SLOW_INTERVAL_MAX)
+            else:
+                # 快速模式
+                return random.randint(FAST_INTERVAL_MIN, FAST_INTERVAL_MAX)
+
 # 代理刷新策略：同一渠道连续失败 3 次才触发刷新；刷新由后台任务合并/去重执行
 FAILURES_TO_REFRESH = 2
 consecutive_failures = {k: 0 for k in account_counters.keys()}
@@ -351,6 +398,9 @@ async def async_post_request(session, headers, url, request_type):
                 
                 # 如果有库存，批量打印并异步处理通知（不阻塞主循环）
                 if available_tickets:
+                    # 标记检测到有票，切换到快速请求模式
+                    await mark_ticket_detected()
+                    
                     # 格式化票务信息：priceName + 空格 + 库存 + 库存数字
                     tickets_with_stock = [f"{name} 库存{stock}" for name, stock in available_tickets]
                     # 只提取priceName用于统计（保持原有统计逻辑）
@@ -372,13 +422,19 @@ async def async_post_request(session, headers, url, request_type):
                     request_type, reason=f"HTTP {response.status_code}"
                 )
 
-            await asyncio.sleep(random.randint(5, 8))
+            # 使用动态请求间隔：根据是否有票调整请求频率
+            wait_time = await get_request_interval()
+            await asyncio.sleep(wait_time)
         except Exception as e:
             # curl_cffi 的异常处理（统一处理所有异常）
             error_msg = str(e)
             print(f"{request_type} 请求错误：{error_msg}")
             await record_failure_and_maybe_trigger_refresh(request_type, reason=error_msg)
-            await asyncio.sleep(random.randint(2, 4))
+            # 失败后使用较短的等待时间，但仍遵循动态速率控制
+            wait_time = await get_request_interval()
+            # 失败后等待时间减半，但最少2秒
+            wait_time = max(2, wait_time // 2)
+            await asyncio.sleep(wait_time)
 
 
 # 定时控制任务
@@ -486,6 +542,11 @@ async def schedule_controller():
 # 主函数
 async def main():
     global is_running
+    
+    # 显示初始请求速率模式
+    print(f"[速率控制] 🐢 初始模式：慢速请求（间隔 {SLOW_INTERVAL_MIN}-{SLOW_INTERVAL_MAX} 秒）")
+    print(f"[速率控制] 📋 检测到有票后将切换到快速模式（间隔 {FAST_INTERVAL_MIN}-{FAST_INTERVAL_MAX} 秒）")
+    print(f"[速率控制] ⏰ 30分钟无新票后自动恢复慢速模式")
     
     # 启动定时控制任务
     schedule_task = asyncio.create_task(schedule_controller())
