@@ -46,9 +46,11 @@ cookies= {
 }
 
 
-
+# 久事2026
 webhook_url = "https://oapi.dingtalk.com/robot/send?access_token=bdc3b8bd0e3ebdb39df90bf67acbbf405d04b60065db1dfe37c6c8e938f52221"
+# 第三个群
 webhook_url2 = "https://oapi.dingtalk.com/robot/send?access_token=1db293dc3b37664145df981e45ad8c1ef1d3d2574b3224fb064ff1a358c97bcf"
+# 久事体育
 webhook_url3 = "https://oapi.dingtalk.com/robot/send?access_token=61cb96708c2543536319fff172477490cfc3cccb703fa73a0d168786928054f8"
 
 
