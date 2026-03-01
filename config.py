@@ -48,7 +48,7 @@ url_e = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew
 url_c = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=6931535304da960001256176&sign=NjZCMjBFNjY5RDhGMDYzMEY5MzEwRDQxQzQyMzQ0MDE%3D"
 
 # cookies
-cookies= {
+cookies = {
   "acw_tc": "0a05731817723597552226091e19e9db17e33fc029a7d72df64bdc9c65d573",
   "cdn_sec_tc": "b4a3cf0d17723597551117913ecf222bffc38499760def8bd268ae3ff3",
 }
@@ -62,16 +62,16 @@ webhook_url2 = "https://oapi.dingtalk.com/robot/send?access_token=1db293dc3b3766
 webhook_url3 = "https://oapi.dingtalk.com/robot/send?access_token=61cb96708c2543536319fff172477490cfc3cccb703fa73a0d168786928054f8"
 
 
-# 参数头部
+# 参数头部模板（共用的 headers，fullmobile 和 token 会在请求时动态更新）
 headers = {
   "Host": "jsapp.jussyun.com",
   "Content-Type": "application/json",
-  "fullmobile": "13817507462",
+  "fullmobile": "",  # 占位符，请求时会动态更新为对应账号的手机号
   "Accept": "*/*",
   "Accept-Charset": "utf-8",
   "device_type": "iPhone 13<iPhone14,5>",
   "Accept-Language": "zh-CN,zh-Hans;q=0.9",
-  "token": "iOKzFyX6B9glD0e9IQ/q0gWV90uLMCOs9LzCeovG9KbVzw22+wYX9HmRYkdjflxXdEdgHjmuAeIrXgQsdRERtHNbrHkxuGl1FpERcDCgo3Y",
+  "token": "",  # 占位符，请求时会动态更新为对应账号的 token
   "Accept-Encoding": "gzip, deflate, br",
   "app_id": "7134142a2721aa804af172b5c1d55e0c",
   "Referer": "https://9000000000000001.jsapp-intranet.jussyun.com/9000000000000001/1.0.238.0/index.html#packageTicket/TicketSelect/TicketSelectBuy?__appxPageId=2&__id__=2",
@@ -80,6 +80,25 @@ headers = {
   "os_version": "",
   "os_type": "ios"
 }
+
+# 账号池（每个账号存储：手机号、token、cookies）
+# headers 是共用的，每次请求时会动态更新 fullmobile 和 token
+# 目前只配置了一个账号，后续你可以在这里继续追加更多账号
+ACCOUNT_POOL = [
+  {
+    "name": "acc_ios_13817507462",  # 账号标识，可随便起名
+    "mobile": "13817507462",  # 手机号
+    "token": "iOKzFyX6B9glD0e9IQ/q0gWV90uLMCOs9LzCeovG9KbVzw22+wYX9HmRYkdjflxXdEdgHjmuAeIrXgQsdRERtHNbrHkxuGl1FpERcDCgo3Y",  # token
+    "cookies": cookies,  # cookies
+  },
+  # 后续账号示例（添加时去掉前面的注释，并补充 mobile/token/cookies）
+  # {
+  #   "name": "acc_ios_第二个账号",
+  #   "mobile": "13800000000",  # 第二个账号的手机号
+  #   "token": "第二个账号的token",  # 第二个账号的 token
+  #   "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+  # },
+]
 
 # headersj = {
 #   "Host": "jsapp.jussyun.com",

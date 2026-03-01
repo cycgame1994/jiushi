@@ -17,14 +17,7 @@ from config import (
     webhook_url2,
     webhook_url3,
     headers,
-    # headersj,
-    # headersb,
-    # headersh,
-    # headersk,
-    # headerse,
-    # headersc,
-    cookies,
-    
+    ACCOUNT_POOL,
 )
 from proxy_config import get_proxy_dict, proxy_updater_task, force_refresh_proxy
 
@@ -71,6 +64,34 @@ def get_account_lock():
     if account_lock is None:
         account_lock = asyncio.Lock()
     return account_lock
+
+# 账号池轮询索引与锁
+account_pool_index = 0
+account_pool_lock: asyncio.Lock = None
+
+
+def get_account_pool_lock():
+    """获取或创建账号池锁"""
+    global account_pool_lock
+    if account_pool_lock is None:
+        account_pool_lock = asyncio.Lock()
+    return account_pool_lock
+
+
+async def get_next_account():
+    """
+    从账号池中按顺序轮询取下一个账号
+    ACCOUNT_POOL 的结构：[{ "name": ..., "mobile": "...", "token": "...", "cookies": {...} }, ...]
+    """
+    global account_pool_index
+
+    if not ACCOUNT_POOL:
+        raise RuntimeError("账号池为空，请在 config.ACCOUNT_POOL 中配置至少一个账号")
+
+    async with get_account_pool_lock():
+        account = ACCOUNT_POOL[account_pool_index % len(ACCOUNT_POOL)]
+        account_pool_index = (account_pool_index + 1) % len(ACCOUNT_POOL)
+        return account
 
 # 动态请求速率控制：根据是否有票调整请求频率
 # 平时慢速请求，检测到有票后加快，30分钟后无新票恢复慢速
@@ -346,7 +367,7 @@ async def send_daily_stats_to_dingding():
 
 
 # 请求
-async def async_post_request(session, headers, url, request_type):
+async def async_post_request(session, url, request_type):
     global is_running, account_counters
     while True:
         # 检查运行状态（快速检查，不获取锁）
@@ -355,6 +376,15 @@ async def async_post_request(session, headers, url, request_type):
             await asyncio.sleep(5)  # 暂停时每5秒检查一次，响应更快
             continue
         try:
+            # 从账号池中取出当前要使用的账号（轮询）
+            account = await get_next_account()
+            
+            # 复制 headers 模板，并动态更新 fullmobile 和 token
+            request_headers = headers.copy()
+            request_headers["fullmobile"] = account["mobile"]
+            request_headers["token"] = account["token"]
+            cookies = account.get("cookies", {})
+
             # 获取当前代理配置
             proxy_dict = await get_proxy_dict()
             # curl_cffi 使用字符串格式的代理URL
@@ -363,7 +393,7 @@ async def async_post_request(session, headers, url, request_type):
             # 使用 curl_cffi 的异步请求
             response = await session.get(
                 url, 
-                headers=headers, 
+                headers=request_headers, 
                 cookies=cookies,
                 proxy=proxy_url,
                 timeout=30
@@ -376,7 +406,7 @@ async def async_post_request(session, headers, url, request_type):
                     account_counters[request_type] += 1
                     current_count = account_counters[request_type]
 
-                print(f'{request_type} 请求了 {current_count} 次')
+                print(f'{request_type} 请求了 {current_count} 次，使用账号: {account.get("name", account.get("mobile", "unknown"))}')
                 
 
                 # curl_cffi 的响应对象，text 是属性不是方法
@@ -574,15 +604,20 @@ async def main():
     
     # 使用 curl_cffi 的异步会话，添加浏览器指纹模拟
     # 可选值: chrome99, chrome100, chrome101, chrome104, chrome107, chrome110, chrome116, chrome119, chrome120, chrome123, edge99, edge101, safari15_3, safari15_5
+    # 启动前先检查账号池是否为空
+    if not ACCOUNT_POOL:
+        print("账号池为空，请在 config.ACCOUNT_POOL 中配置至少一个账号")
+        return
+
     async with AsyncSession(impersonate="chrome123") as session:
         tasks = [
-            async_post_request(session, headers, url_a, 'a'),
-            async_post_request(session, headers, url_j, 'j'),
-            async_post_request(session, headers, url_b, 'b'),
-            async_post_request(session, headers, url_h, 'h'),
-            async_post_request(session, headers, url_k, 'k'),
-            async_post_request(session, headers, url_e, 'e'),
-            async_post_request(session, headers, url_c, 'c'),
+            async_post_request(session, url_a, 'a'),
+            async_post_request(session, url_j, 'j'),
+            async_post_request(session, url_b, 'b'),
+            async_post_request(session, url_h, 'h'),
+            async_post_request(session, url_k, 'k'),
+            async_post_request(session, url_e, 'e'),
+            async_post_request(session, url_c, 'c'),
         ]
         await asyncio.gather(*tasks, proxy_task, schedule_task, refresh_worker_task)
 
