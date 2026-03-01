@@ -79,7 +79,7 @@ SLOW_INTERVAL_MIN = 25  # 慢速请求间隔（秒）- 最小值
 SLOW_INTERVAL_MAX = 30  # 慢速请求间隔（秒）- 最大值
 FAST_INTERVAL_MIN = 10  # 快速请求间隔（秒）- 最小值（检测到有票后）
 FAST_INTERVAL_MAX = 13   # 快速请求间隔（秒）- 最大值（检测到有票后）
-TICKET_TIMEOUT = 10 * 60  # 10分钟后无新票恢复慢速（秒）
+TICKET_TIMEOUT = 5 * 60  # 10分钟后无新票恢复慢速（秒）
 
 def get_ticket_detected_lock():
     """获取或创建有票状态锁"""
