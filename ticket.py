@@ -65,8 +65,16 @@ def get_account_lock():
         account_lock = asyncio.Lock()
     return account_lock
 
-# 账号池轮询索引与锁
-account_pool_index = 0
+# 账号池轮询索引与锁（每个通道独立维护自己的账号索引）
+account_pool_indices = {
+    'a': 0,
+    'j': 0,
+    'b': 0,
+    'h': 0,
+    'k': 0,
+    'e': 0,
+    'c': 0
+}
 account_pool_lock: asyncio.Lock = None
 
 
@@ -78,19 +86,25 @@ def get_account_pool_lock():
     return account_pool_lock
 
 
-async def get_next_account():
+async def get_next_account(request_type: str):
     """
-    从账号池中按顺序轮询取下一个账号
+    从账号池中按顺序轮询取下一个账号（每个通道独立循环）
     ACCOUNT_POOL 的结构：[{ "name": ..., "mobile": "...", "token": "...", "cookies": {...} }, ...]
+    
+    Args:
+        request_type: 请求类型（'a', 'j', 'b', 'h', 'k', 'e', 'c'）
     """
-    global account_pool_index
+    global account_pool_indices
 
     if not ACCOUNT_POOL:
         raise RuntimeError("账号池为空，请在 config.ACCOUNT_POOL 中配置至少一个账号")
 
     async with get_account_pool_lock():
-        account = ACCOUNT_POOL[account_pool_index % len(ACCOUNT_POOL)]
-        account_pool_index = (account_pool_index + 1) % len(ACCOUNT_POOL)
+        # 获取当前通道的账号索引
+        current_index = account_pool_indices.get(request_type, 0)
+        account = ACCOUNT_POOL[current_index % len(ACCOUNT_POOL)]
+        # 更新当前通道的账号索引（循环）
+        account_pool_indices[request_type] = (current_index + 1) % len(ACCOUNT_POOL)
         return account
 
 # 动态请求速率控制：根据是否有票调整请求频率
@@ -376,8 +390,8 @@ async def async_post_request(session, url, request_type):
             await asyncio.sleep(5)  # 暂停时每5秒检查一次，响应更快
             continue
         try:
-            # 从账号池中取出当前要使用的账号（轮询）
-            account = await get_next_account()
+            # 从账号池中取出当前要使用的账号（每个通道独立循环）
+            account = await get_next_account(request_type)
             
             # 复制 headers 模板，并动态更新 fullmobile 和 token
             request_headers = headers.copy()
@@ -415,12 +429,19 @@ async def async_post_request(session, url, request_type):
                 data1 = json.loads(data)
                 showSessionModelList = data1.get('data', {}).get('showSessionModelList', [])
                 # print(showSessionModelList)
-                # 如果 showSessionModelList 为空，发送请求到 Bark
+                # 如果 showSessionModelList 为空，意味着账号被封，发送 Bark 通知
                 if not showSessionModelList:
                     try:
+                        # 获取账号名称（优先使用 name，否则使用 mobile）
+                        account_name = account.get("name", account.get("mobile", "unknown"))
+                        # URL 编码账号名称，避免特殊字符导致 URL 错误
+                        from urllib.parse import quote
+                        encoded_account_name = quote(account_name)
+                        # 发送 Bark 通知，URL 中的 banned 替换为被封账号名称
+                        bark_url = f'https://api.day.app/BWhqdkST7VWwSj3HU5tbRo/{encoded_account_name}'
                         async with AsyncSession() as bark_session:
-                            await bark_session.get('https://api.day.app/BWhqdkST7VWwSj3HU5tbRo/banned', timeout=10)
-                            print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 检测到 showSessionModelList 为空，已发送 Bark 通知")
+                            await bark_session.get(bark_url, timeout=10)
+                            print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 检测到账号被封: {account_name}，已发送 Bark 通知")
                     except Exception as e:
                         print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 发送 Bark 通知失败: {e}")
 
