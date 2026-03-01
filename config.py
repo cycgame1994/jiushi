@@ -32,17 +32,25 @@ user_agent_list = [
 
 
 # URL
-url_a = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=6931332204da960001241231&sign=RTJGQTY1QkY5N0Q0NUM1MzM4RkEwNDk0Q0I5MjcxMTk%3D"
-url_j = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=6931340149963100012455d5&sign=QTU4RDhGQzkwQUVFNUYzRDMyMzc5MjQ1NTQ3NjNDM0I%3D"# 钉钉通知地址
-url_b = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=693132e14996310001244821&sign=N0M1MDBBMTBDQkNCOEM4Njk1REVBMDVDNTU4ODQxMTM%3D"
-url_h = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=69315292499631000125952f&sign=MzBCMTNDRjdFNTBDQjdDOTEwREExM0NGQTZCM0MwMzc%3D"
-url_k = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=693152ad4996310001259691&sign=RUI0N0ZDNUU1QjgzNzBEMTY3QzQyRUM5QjQ4QkMyMzk%3D"
-url_e = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=693152c604da960001255ee6&sign=MUU2NkIxNkNGNjA5NDg4NTg2RENFQTJEQjE3NjRBMzY%3D"
-url_c = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=6931535304da960001256176&sign=NjVDMTNFRDY2MTU0NUU0QUUzQTlGM0U3MTZDMzlCOTg%3D"
+# url_a = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=6931332204da960001241231&sign=RTJGQTY1QkY5N0Q0NUM1MzM4RkEwNDk0Q0I5MjcxMTk%3D"
+# url_j = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=6931340149963100012455d5&sign=QTU4RDhGQzkwQUVFNUYzRDMyMzc5MjQ1NTQ3NjNDM0I%3D"# 钉钉通知地址
+# url_b = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=693132e14996310001244821&sign=N0M1MDBBMTBDQkNCOEM4Njk1REVBMDVDNTU4ODQxMTM%3D"
+# url_h = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=69315292499631000125952f&sign=MzBCMTNDRjdFNTBDQjdDOTEwREExM0NGQTZCM0MwMzc%3D"
+# url_k = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=693152ad4996310001259691&sign=RUI0N0ZDNUU1QjgzNzBEMTY3QzQyRUM5QjQ4QkMyMzk%3D"
+# url_e = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=693152c604da960001255ee6&sign=MUU2NkIxNkNGNjA5NDg4NTg2RENFQTJEQjE3NjRBMzY%3D"
+# url_c = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=wechat_mini&showId=6931535304da960001256176&sign=NjVDMTNFRDY2MTU0NUU0QUUzQTlGM0U3MTZDMzlCOTg%3D"
+url_a = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=6931332204da960001241231&sign=MkMwQTAxRTczMjAyNDMyNzU0OTMxNDE4QjdCRjQ0MjY%3D"
+url_j = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=6931340149963100012455d5&sign=QjNFOTZDNDkzNDVBNkE5QTRCNjcyMERCNUZGODIxOUI%3D"# 钉钉通知地址
+url_b = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=693132e14996310001244821&sign=N0ZEQUZDMTI5QTUyRjE3NEUzNjA2ODA4NkRFQ0Q3OEE%3D"
+url_h = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=69315292499631000125952f&sign=ODUwNDk2MEQ5RjUyQ0FBMTUzRTc3REFFNzdCMzJBMTM%3D"
+url_k = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=693152ad4996310001259691&sign=NUMyOUEwMTgzMkUwRTFDQzM5QzVFMkU3QkZBM0FFNEU%3D"
+url_e = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=693152c604da960001255ee6&sign=MUZGNzZCNzY2RTE0NzQ3N0I3NTlFN0I5NzE4OTE4MTQ%3D"
+url_c = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew?inWhite=false&os_type=ios&showId=6931535304da960001256176&sign=NjZCMjBFNjY5RDhGMDYzMEY5MzEwRDQxQzQyMzQ0MDE%3D"
 
 # cookies
 cookies= {
-  "ssxmod_itna3": "C50qzxRDcADtD=D7D9exgQ=G7Dy0rDuAno97E7exB4+fIxDs0D6AxqnKi8DwxY50kDIM5DuDi5tzD5zeKGLRx0=DmZkiiDGAo4F4TzDkGnfHpx4xvYYQDRcqFRDA5DnDlPGhDBejy8W2rPiDxKD7d5Dtktw9GN=DwwK+A25weKemWqPGoI5CWKYpjT3wYKkQPITNaK7eD",
+  "acw_tc": "0a05731817723597552226091e19e9db17e33fc029a7d72df64bdc9c65d573",
+  "cdn_sec_tc": "b4a3cf0d17723597551117913ecf222bffc38499760def8bd268ae3ff3",
 }
 
 
@@ -55,152 +63,149 @@ webhook_url3 = "https://oapi.dingtalk.com/robot/send?access_token=61cb96708c2543
 
 
 # 参数头部
-headersa= {
+headers = {
   "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
   "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+  "fullmobile": "13817507462",
   "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+  "Accept-Charset": "utf-8",
+  "device_type": "iPhone 13<iPhone14,5>",
+  "Accept-Language": "zh-CN,zh-Hans;q=0.9",
+  "token": "iOKzFyX6B9glD0e9IQ/q0gWV90uLMCOs9LzCeovG9KbVzw22+wYX9HmRYkdjflxXdEdgHjmuAeIrXgQsdRERtHNbrHkxuGl1FpERcDCgo3Y",
   "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
+  "app_id": "7134142a2721aa804af172b5c1d55e0c",
+  "Referer": "https://9000000000000001.jsapp-intranet.jussyun.com/9000000000000001/1.0.238.0/index.html#packageTicket/TicketSelect/TicketSelectBuy?__appxPageId=2&__id__=2",
+  "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 26_2_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/23C71 Ariver/1.0.15 mPaaS/Portal WK RVKType(0) NebulaX/1.0.0",
+  "Connection": "keep-alive",
+  "os_version": "",
+  "os_type": "ios"
 }
 
-headersj = {
-  "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-  "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-  "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
-}
+# headersj = {
+#   "Host": "jsapp.jussyun.com",
+#   "Connection": "keep-alive",
+#   "device_type": "microsoft",
+#   "fullMobile": "18101860881",
+#   "os_type": "wechat_mini",
+#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
+#   "xweb_xhr": "1",
+#   "os_version": "Windows 10 x64",
+#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
+#   "Content-Type": "application/json",
+#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+#   "Accept": "*/*",
+#   "Sec-Fetch-Site": "cross-site",
+#   "Sec-Fetch-Mode": "cors",
+#   "Sec-Fetch-Dest": "empty",
+#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+#   "Accept-Encoding": "gzip, deflate, br",
+#   "Accept-Language": "zh-CN,zh;q=0.9"
+# }
 
-headersb = {
-  "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-  "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-  "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
-}
+# headersb = {
+#   "Host": "jsapp.jussyun.com",
+#   "Connection": "keep-alive",
+#   "device_type": "microsoft",
+#   "fullMobile": "18101860881",
+#   "os_type": "wechat_mini",
+#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
+#   "xweb_xhr": "1",
+#   "os_version": "Windows 10 x64",
+#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
+#   "Content-Type": "application/json",
+#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+#   "Accept": "*/*",
+#   "Sec-Fetch-Site": "cross-site",
+#   "Sec-Fetch-Mode": "cors",
+#   "Sec-Fetch-Dest": "empty",
+#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+#   "Accept-Encoding": "gzip, deflate, br",
+#   "Accept-Language": "zh-CN,zh;q=0.9"
+# }
 
-headersh = {
-  "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-  "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-  "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
-}
+# headersh = {
+#   "Host": "jsapp.jussyun.com",
+#   "Connection": "keep-alive",
+#   "device_type": "microsoft",
+#   "fullMobile": "18101860881",
+#   "os_type": "wechat_mini",
+#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
+#   "xweb_xhr": "1",
+#   "os_version": "Windows 10 x64",
+#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
+#   "Content-Type": "application/json",
+#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+#   "Accept": "*/*",
+#   "Sec-Fetch-Site": "cross-site",
+#   "Sec-Fetch-Mode": "cors",
+#   "Sec-Fetch-Dest": "empty",
+#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+#   "Accept-Encoding": "gzip, deflate, br",
+#   "Accept-Language": "zh-CN,zh;q=0.9"
+# }
 
-headersk = {
-  "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-  "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-  "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
-}
+# headersk = {
+#   "Host": "jsapp.jussyun.com",
+#   "Connection": "keep-alive",
+#   "device_type": "microsoft",
+#   "fullMobile": "18101860881",
+#   "os_type": "wechat_mini",
+#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
+#   "xweb_xhr": "1",
+#   "os_version": "Windows 10 x64",
+#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
+#   "Content-Type": "application/json",
+#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+#   "Accept": "*/*",
+#   "Sec-Fetch-Site": "cross-site",
+#   "Sec-Fetch-Mode": "cors",
+#   "Sec-Fetch-Dest": "empty",
+#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+#   "Accept-Encoding": "gzip, deflate, br",
+#   "Accept-Language": "zh-CN,zh;q=0.9"
+# }
 
-headerse = {
-  "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-  "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-  "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
-}
+# headerse = {
+#   "Host": "jsapp.jussyun.com",
+#   "Connection": "keep-alive",
+#   "device_type": "microsoft",
+#   "fullMobile": "18101860881",
+#   "os_type": "wechat_mini",
+#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
+#   "xweb_xhr": "1",
+#   "os_version": "Windows 10 x64",
+#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
+#   "Content-Type": "application/json",
+#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+#   "Accept": "*/*",
+#   "Sec-Fetch-Site": "cross-site",
+#   "Sec-Fetch-Mode": "cors",
+#   "Sec-Fetch-Dest": "empty",
+#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+#   "Accept-Encoding": "gzip, deflate, br",
+#   "Accept-Language": "zh-CN,zh;q=0.9"
+# }
 
-headersc = {
-  "Host": "jsapp.jussyun.com",
-  "Connection": "keep-alive",
-  "device_type": "microsoft",
-  "fullMobile": "18101860881",
-  "os_type": "wechat_mini",
-  "app_id": "7134142a2721aa804af172b5c1d55e0c",
-  "xweb_xhr": "1",
-  "os_version": "Windows 10 x64",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-  "Content-Type": "application/json",
-  "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-  "Accept": "*/*",
-  "Sec-Fetch-Site": "cross-site",
-  "Sec-Fetch-Mode": "cors",
-  "Sec-Fetch-Dest": "empty",
-  "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-  "Accept-Encoding": "gzip, deflate, br",
-  "Accept-Language": "zh-CN,zh;q=0.9"
-}
+# headersc = {
+#   "Host": "jsapp.jussyun.com",
+#   "Connection": "keep-alive",
+#   "device_type": "microsoft",
+#   "fullMobile": "18101860881",
+#   "os_type": "wechat_mini",
+#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
+#   "xweb_xhr": "1",
+#   "os_version": "Windows 10 x64",
+#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
+#   "Content-Type": "application/json",
+#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
+#   "Accept": "*/*",
+#   "Sec-Fetch-Site": "cross-site",
+#   "Sec-Fetch-Mode": "cors",
+#   "Sec-Fetch-Dest": "empty",
+#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
+#   "Accept-Encoding": "gzip, deflate, br",
+#   "Accept-Language": "zh-CN,zh;q=0.9"
+# }
 
 
 

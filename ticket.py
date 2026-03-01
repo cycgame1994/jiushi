@@ -1,6 +1,7 @@
 import random
 import json
 from datetime import datetime, time as dt_time
+from re import S
 from curl_cffi.requests import AsyncSession
 import asyncio
 import requests
@@ -15,13 +16,13 @@ from config import (
     webhook_url,
     webhook_url2,
     webhook_url3,
-    headersa,
-    headersj,
-    headersb,
-    headersh,
-    headersk,
-    headerse,
-    headersc,
+    headers,
+    # headersj,
+    # headersb,
+    # headersh,
+    # headersk,
+    # headerse,
+    # headersc,
     cookies,
     
 )
@@ -383,7 +384,16 @@ async def async_post_request(session, headers, url, request_type):
                 print(f"请求成功！返回数据：{datetime.now().strftime('%m-%d %H:%M:%S')}")
                 data1 = json.loads(data)
                 showSessionModelList = data1.get('data', {}).get('showSessionModelList', [])
-                
+                # print(showSessionModelList)
+                # 如果 showSessionModelList 为空，发送请求到 Bark
+                if not showSessionModelList:
+                    try:
+                        async with AsyncSession() as bark_session:
+                            await bark_session.get('https://api.day.app/BWhqdkST7VWwSj3HU5tbRo/banned', timeout=10)
+                            print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 检测到 showSessionModelList 为空，已发送 Bark 通知")
+                    except Exception as e:
+                        print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 发送 Bark 通知失败: {e}")
+
                 # 收集本次请求中所有有库存的priceName和库存数量
                 # 判断条件：库存大于0即认为有票（不限制必须等于1）
                 available_tickets = [
@@ -566,13 +576,13 @@ async def main():
     # 可选值: chrome99, chrome100, chrome101, chrome104, chrome107, chrome110, chrome116, chrome119, chrome120, chrome123, edge99, edge101, safari15_3, safari15_5
     async with AsyncSession(impersonate="chrome123") as session:
         tasks = [
-            async_post_request(session, headersa, url_a, 'a'),
-            async_post_request(session, headersj, url_j, 'j'),
-            async_post_request(session, headersb, url_b, 'b'),
-            async_post_request(session, headersh, url_h, 'h'),
-            async_post_request(session, headersk, url_k, 'k'),
-            async_post_request(session, headerse, url_e, 'e'),
-            async_post_request(session, headersc, url_c, 'c'),
+            async_post_request(session, headers, url_a, 'a'),
+            async_post_request(session, headers, url_j, 'j'),
+            async_post_request(session, headers, url_b, 'b'),
+            async_post_request(session, headers, url_h, 'h'),
+            async_post_request(session, headers, url_k, 'k'),
+            async_post_request(session, headers, url_e, 'e'),
+            async_post_request(session, headers, url_c, 'c'),
         ]
         await asyncio.gather(*tasks, proxy_task, schedule_task, refresh_worker_task)
 
