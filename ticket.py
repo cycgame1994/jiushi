@@ -111,10 +111,10 @@ async def get_next_account(request_type: str):
 # 平时慢速请求，检测到有票后加快，30分钟后无新票恢复慢速
 ticket_detected_time = None  # 检测到有票的时间戳
 ticket_detected_lock: asyncio.Lock = None  # 有票状态锁
-SLOW_INTERVAL_MIN = 35  # 慢速请求间隔（秒）- 最小值
-SLOW_INTERVAL_MAX = 45  # 慢速请求间隔（秒）- 最大值
-FAST_INTERVAL_MIN = 25  # 快速请求间隔（秒）- 最小值（检测到有票后）
-FAST_INTERVAL_MAX = 30   # 快速请求间隔（秒）- 最大值（检测到有票后）
+SLOW_INTERVAL_MIN = 50  # 慢速请求间隔（秒）- 最小值
+SLOW_INTERVAL_MAX = 55  # 慢速请求间隔（秒）- 最大值
+FAST_INTERVAL_MIN = 30  # 快速请求间隔（秒）- 最小值（检测到有票后）
+FAST_INTERVAL_MAX = 35   # 快速请求间隔（秒）- 最大值（检测到有票后）
 TICKET_TIMEOUT = 5 * 60  # 10分钟后无新票恢复慢速（秒）
 
 def get_ticket_detected_lock():
