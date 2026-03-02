@@ -53,8 +53,12 @@ cookies = {
   "cdn_sec_tc": "b4a3cf0d17723597551117913ecf222bffc38499760def8bd268ae3ff3",
 }
 cookies2 = {
-  "acw_tc": "0a05731217723660229995752e61df65ef3e4afcd048fc31e8ef6436f57f65",
-  "cdn_sec_tc": "b4a3cf0a17723660229191515e9b66d4948ba34e6d1d62e000593f9666",
+  "acw_tc": "0a05837317724147549686433e523fb9160639c75fb58c5ff44b33848147d3",
+  "cdn_sec_tc": "3daa4f2017724147549426315e98b3efc53241ce2a985e8b846439d15a",
+}
+cookies3 = {
+  "acw_tc": "0a05837317724147549686433e523fb9160639c75fb58c5ff44b33848147d3",
+  "cdn_sec_tc": "3daa4f2017724147549426315e98b3efc53241ce2a985e8b846439d15a",
 }
 
 
@@ -90,12 +94,12 @@ headers = {
 # headers 是共用的，每次请求时会动态更新 fullmobile 和 token
 # 目前只配置了一个账号，后续你可以在这里继续追加更多账号
 ACCOUNT_POOL = [
-  {
-    "name": "acc_ios_13817507462",  # 账号标识，可随便起名
-    "mobile": "13817507462",  # 手机号
-    "token": "iOKzFyX6B9glD0e9IQ/q0gWV90uLMCOs9LzCeovG9KbVzw22+wYX9HmRYkdjflxXdEdgHjmuAeIrXgQsdRERtHNbrHkxuGl1FpERcDCgo3Y",  # token
-    "cookies": cookies,  # cookies
-  },
+  # {
+  #   "name": "acc_ios_13817507462",  # 账号标识，可随便起名
+  #   "mobile": "13817507462",  # 手机号
+  #   "token": "iOKzFyX6B9glD0e9IQ/q0gWV90uLMCOs9LzCeovG9KbVzw22+wYX9HmRYkdjflxXdEdgHjmuAeIrXgQsdRERtHNbrHkxuGl1FpERcDCgo3Y",  # token
+  #   "cookies": cookies,  # cookies
+  # },
   # 后续账号示例（添加时去掉前面的注释，并补充 mobile/token/cookies）
   # {
   #   "name": "acc_ios_第二个账号",
@@ -103,139 +107,21 @@ ACCOUNT_POOL = [
   #   "token": "第二个账号的token",  # 第二个账号的 token
   #   "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
   # },
-  # {
-  #   "name": "acc_ios_18942240295",
-  #   "mobile": "18942240295",  # 第二个账号的手机号
-  #   "token": "vWnjApiU+gzuVWEoldx49C6ti/+sqL5eUepVuVc5EQEKdKgEWZvNHLKvuTToNC5d6e7qMViRIFF2N9uL+4tstJhWTU5VBds/pX8Lxc3RyMw",  # 第二个账号的 token
-  #   "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
-  # },
+  {
+    "name": "acc_ios_18942240295",
+    "mobile": "18942240295",  # 第二个账号的手机号
+    "token": "9TYa5XaAcynSUGDR2Aas7YyxWWDZRbRZtiIH7RMMBYl7BhgOSs/wzshhrIV2ezvnugZ9mae6KR7//L0208OSsMh7ZGsy4OCaSfYBibirc/g",  # 第二个账号的 token
+    "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+  },
+  {
+    "name": "acc_ios_19370803769",
+    "mobile": "19370803769",  # 第二个账号的手机号
+    "token": "adMV4MT3fMUEi1QL+FRz/MFZgwzZq6wS5RSKzZ/vzUye7SaCMUGvsXdkwzDs7oI/xhAXbqlpRt9RaPYlL5K4FTXK4oEmJcUhMWm0ZSWKtr8",  # 第二个账号的 token
+    "cookies": cookies3,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+  },
 ]
 
-# headersj = {
-#   "Host": "jsapp.jussyun.com",
-#   "Connection": "keep-alive",
-#   "device_type": "microsoft",
-#   "fullMobile": "18101860881",
-#   "os_type": "wechat_mini",
-#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
-#   "xweb_xhr": "1",
-#   "os_version": "Windows 10 x64",
-#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-#   "Content-Type": "application/json",
-#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-#   "Accept": "*/*",
-#   "Sec-Fetch-Site": "cross-site",
-#   "Sec-Fetch-Mode": "cors",
-#   "Sec-Fetch-Dest": "empty",
-#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-#   "Accept-Encoding": "gzip, deflate, br",
-#   "Accept-Language": "zh-CN,zh;q=0.9"
-# }
 
-# headersb = {
-#   "Host": "jsapp.jussyun.com",
-#   "Connection": "keep-alive",
-#   "device_type": "microsoft",
-#   "fullMobile": "18101860881",
-#   "os_type": "wechat_mini",
-#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
-#   "xweb_xhr": "1",
-#   "os_version": "Windows 10 x64",
-#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-#   "Content-Type": "application/json",
-#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-#   "Accept": "*/*",
-#   "Sec-Fetch-Site": "cross-site",
-#   "Sec-Fetch-Mode": "cors",
-#   "Sec-Fetch-Dest": "empty",
-#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-#   "Accept-Encoding": "gzip, deflate, br",
-#   "Accept-Language": "zh-CN,zh;q=0.9"
-# }
-
-# headersh = {
-#   "Host": "jsapp.jussyun.com",
-#   "Connection": "keep-alive",
-#   "device_type": "microsoft",
-#   "fullMobile": "18101860881",
-#   "os_type": "wechat_mini",
-#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
-#   "xweb_xhr": "1",
-#   "os_version": "Windows 10 x64",
-#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-#   "Content-Type": "application/json",
-#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-#   "Accept": "*/*",
-#   "Sec-Fetch-Site": "cross-site",
-#   "Sec-Fetch-Mode": "cors",
-#   "Sec-Fetch-Dest": "empty",
-#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-#   "Accept-Encoding": "gzip, deflate, br",
-#   "Accept-Language": "zh-CN,zh;q=0.9"
-# }
-
-# headersk = {
-#   "Host": "jsapp.jussyun.com",
-#   "Connection": "keep-alive",
-#   "device_type": "microsoft",
-#   "fullMobile": "18101860881",
-#   "os_type": "wechat_mini",
-#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
-#   "xweb_xhr": "1",
-#   "os_version": "Windows 10 x64",
-#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-#   "Content-Type": "application/json",
-#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-#   "Accept": "*/*",
-#   "Sec-Fetch-Site": "cross-site",
-#   "Sec-Fetch-Mode": "cors",
-#   "Sec-Fetch-Dest": "empty",
-#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-#   "Accept-Encoding": "gzip, deflate, br",
-#   "Accept-Language": "zh-CN,zh;q=0.9"
-# }
-
-# headerse = {
-#   "Host": "jsapp.jussyun.com",
-#   "Connection": "keep-alive",
-#   "device_type": "microsoft",
-#   "fullMobile": "18101860881",
-#   "os_type": "wechat_mini",
-#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
-#   "xweb_xhr": "1",
-#   "os_version": "Windows 10 x64",
-#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-#   "Content-Type": "application/json",
-#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-#   "Accept": "*/*",
-#   "Sec-Fetch-Site": "cross-site",
-#   "Sec-Fetch-Mode": "cors",
-#   "Sec-Fetch-Dest": "empty",
-#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-#   "Accept-Encoding": "gzip, deflate, br",
-#   "Accept-Language": "zh-CN,zh;q=0.9"
-# }
-
-# headersc = {
-#   "Host": "jsapp.jussyun.com",
-#   "Connection": "keep-alive",
-#   "device_type": "microsoft",
-#   "fullMobile": "18101860881",
-#   "os_type": "wechat_mini",
-#   "app_id": "7134142a2721aa804af172b5c1d55e0c",
-#   "xweb_xhr": "1",
-#   "os_version": "Windows 10 x64",
-#   "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36 MicroMessenger/7.0.20.1781(0x6700143B) NetType/WIFI MiniProgramEnv/Windows WindowsWechat/WMPF WindowsWechat(0x63090a13) UnifiedPCWindowsWechat(0xf254162e) XWEB/18163",
-#   "Content-Type": "application/json",
-#   "token": "RKQfb4x8ZiQ7vU/d0PJWE4wVfMTt1E6Z6uSa6+xpM4IpJ3gMsn/q54ijfR7vfaI406tAifdY8RqrcDMWuQxIgTcJ8C0bQ6s27S4rI+rhEZmH1IHDEF5XWjbmJBJWAUVkrUVyetL3lBZqCt9O0pFzJOpfZP7re2NemfNREdiq6YY",
-#   "Accept": "*/*",
-#   "Sec-Fetch-Site": "cross-site",
-#   "Sec-Fetch-Mode": "cors",
-#   "Sec-Fetch-Dest": "empty",
-#   "Referer": "https://servicewechat.com/wxbd4ec54a9e9ce6dd/146/page-frame.html",
-#   "Accept-Encoding": "gzip, deflate, br",
-#   "Accept-Language": "zh-CN,zh;q=0.9"
-# }
 
 
 
