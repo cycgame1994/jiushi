@@ -60,6 +60,10 @@ cookies3 = {
   "acw_tc": "0a05837317724147549686433e523fb9160639c75fb58c5ff44b33848147d3",
   "cdn_sec_tc": "3daa4f2017724147549426315e98b3efc53241ce2a985e8b846439d15a",
 }
+cookies4 = {
+  "acw_tc": "0a05731417724255773453165e5681f1bbdc8e4a693a6aba56c468a069fea7",
+  "cdn_sec_tc": "3daa4f2917724255773071037e456d1315477cccd2b97337f3fe93905f",
+}
 
 
 
@@ -117,7 +121,13 @@ ACCOUNT_POOL = [
     "name": "acc_ios_19370803769",
     "mobile": "19370803769",  # 第二个账号的手机号
     "token": "adMV4MT3fMUEi1QL+FRz/MFZgwzZq6wS5RSKzZ/vzUye7SaCMUGvsXdkwzDs7oI/xhAXbqlpRt9RaPYlL5K4FTXK4oEmJcUhMWm0ZSWKtr8",  # 第二个账号的 token
-    "cookies": cookies3,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+    "cookies": cookies3,  # 第二个账号的 cookies（需要在上面定义 cookies3）
+  },
+  {
+    "name": "acc_ios_18101860881",
+    "mobile": "18101860881",  # 第二个账号的手机号
+    "token": "ovdbO+x3b/TtuOSfSfELjvkX/npMl7urYtYA7JJLgzMLxRii4etN4W/0efu9zI2uda3BT4LOhK58mNou9rORPWRsMeHXH7M19lflAdHjCyY",  # 第二个账号的 token
+    "cookies": cookies4,  # 第二个账号的 cookies（需要在上面定义 cookies4）
   },
 ]
 
