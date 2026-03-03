@@ -33,6 +33,18 @@ from proxy_config import get_proxy_dict, proxy_updater_task, force_refresh_proxy
 is_running = False  # 全局运行标志
 running_lock: asyncio.Lock = None  # 运行状态锁
 
+# Bark 基础配置（用于账号封禁 & 熔断 start/stop 通知）
+BARK_BASE_URL = "https://api.day.app/BWhqdkST7VWwSj3HU5tbRo"
+
+# 熔断/软封禁控制配置
+SOFTBAN_BARK_THRESHOLD = 7       # 连续触发 Bark 次数达到该值后触发熔断
+PAUSE_DURATION_SECONDS = 60     # 熔断暂停时间（秒），可按需调整
+
+# 熔断状态
+softban_bark_count = 0           # 当前累计的 Bark 次数（用于软封禁判断）
+pause_in_progress = False        # 是否已经在执行暂停流程，避免重复触发
+softban_lock: asyncio.Lock = None  # 熔断计数锁
+
 # 定时配置
 START_TIME = dt_time(9, 0, 0)  # 启动时间
 END_TIME = dt_time(23, 59, 59)    # 结束时间
@@ -45,6 +57,14 @@ def get_running_lock():
     if running_lock is None:
         running_lock = asyncio.Lock()
     return running_lock
+
+
+def get_softban_lock():
+    """获取或创建熔断计数锁"""
+    global softban_lock
+    if softban_lock is None:
+        softban_lock = asyncio.Lock()
+    return softban_lock
 
 # 请求计数器（按通道区分）- 使用字典存储
 account_counters = {
@@ -297,6 +317,20 @@ async def get_stats_message():
             stats_lines.append(f"  {sku}: {count}次")
         return "\n".join(stats_lines)
 
+
+async def send_bark_message(message: str):
+    """
+    发送 Bark 通知
+    message 会放在 BARK_BASE_URL 最后一个斜杠后面，例如 .../start, .../stop, .../账号名
+    """
+    bark_url = f"{BARK_BASE_URL}/{message}"
+    try:
+        async with AsyncSession() as bark_session:
+            await bark_session.get(bark_url, timeout=10)
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 已发送 Bark 通知: {message}")
+    except Exception as e:
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 发送 Bark 通知失败({message}): {e}")
+
 # 发送钉钉通知（异步版本，不阻塞主循环）
 async def send_dingdingbot_async(tickets_info):
     """异步发送合并后的有票信息到钉钉，不阻塞主循环"""
@@ -336,6 +370,53 @@ async def send_dingdingbot_async(tickets_info):
                     print(f"✗ 钉钉通知{i}发送失败，状态码: {result.status_code}")
     except Exception as e:
         print(f"发送钉钉消息时发生错误: {e}")
+
+
+async def pause_all_requests_due_to_softban():
+    """
+    触发熔断：暂停所有请求一段时间，然后自动恢复。
+    会发送 Bark 通知：stop（开始暂停）和 start（恢复）。
+    """
+    global is_running, pause_in_progress, softban_bark_count
+
+    # 防止重复进入
+    async with get_softban_lock():
+        if pause_in_progress:
+            return
+        pause_in_progress = True
+
+    try:
+        # 先暂停：设置全局运行标志为 False
+        async with get_running_lock():
+            if not is_running:
+                # 已经是暂停状态，直接退出并重置标志
+                async with get_softban_lock():
+                    pause_in_progress = False
+                return
+            is_running = False
+
+        # 发送 Bark 通知：程序停止（soft stop）
+        await send_bark_message("stop")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 软封禁熔断触发：暂停所有请求 {PAUSE_DURATION_SECONDS} 秒")
+
+        # 暂停指定时间
+        await asyncio.sleep(PAUSE_DURATION_SECONDS)
+
+        # 恢复运行（按时间窗口控制，如果此时 schedule_controller 已经关闭，则这里的 True 会很快被覆盖）
+        async with get_running_lock():
+            is_running = True
+
+        # 重置软封禁计数
+        async with get_softban_lock():
+            softban_bark_count = 0
+
+        # 发送 Bark 通知：程序重新启动
+        await send_bark_message("start")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 软封禁熔断结束：恢复所有请求")
+    finally:
+        # 无论成功与否，都要重置 pause_in_progress 状态
+        async with get_softban_lock():
+            pause_in_progress = False
 
 
 # 发送每日统计消息到钉钉
@@ -429,19 +510,26 @@ async def async_post_request(session, url, request_type):
                 data1 = json.loads(data)
                 showSessionModelList = data1.get('data', {}).get('showSessionModelList', [])
                 # print(showSessionModelList)
-                # 如果 showSessionModelList 为空，意味着账号被封，发送 Bark 通知
+                # 如果 showSessionModelList 为空，意味着账号被封/软封禁，发送 Bark 通知
                 if not showSessionModelList:
                     try:
                         # 获取账号名称（优先使用 name，否则使用 mobile）
                         account_name = account.get("name", account.get("mobile", "unknown"))
-                        # URL 编码账号名称，避免特殊字符导致 URL 错误
-                        from urllib.parse import quote
-                        encoded_account_name = quote(account_name)
-                        # 发送 Bark 通知，URL 中的 banned 替换为被封账号名称
-                        bark_url = f'https://api.day.app/BWhqdkST7VWwSj3HU5tbRo/{encoded_account_name}'
-                        async with AsyncSession() as bark_session:
-                            await bark_session.get(bark_url, timeout=10)
-                            print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 检测到账号被封: {account_name}，已发送 Bark 通知")
+                        # 发送 Bark 通知：账号名作为 message 放到 URL 最后一段
+                        await send_bark_message(account_name)
+                        print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 检测到账号被封/软封禁: {account_name}，已发送 Bark 通知")
+
+                        # 累计软封禁 Bark 次数，达到阈值后触发全局熔断暂停
+                        global softban_bark_count
+                        async with get_softban_lock():
+                            softban_bark_count += 1
+                            current_softban_count = softban_bark_count
+
+                        if current_softban_count >= SOFTBAN_BARK_THRESHOLD:
+                            print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 软封禁 Bark 次数达到阈值 {SOFTBAN_BARK_THRESHOLD}，触发熔断暂停")
+                            # 在后台异步执行暂停流程，避免阻塞当前请求协程
+                            asyncio.create_task(pause_all_requests_due_to_softban())
+
                     except Exception as e:
                         print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 发送 Bark 通知失败: {e}")
 
@@ -514,6 +602,8 @@ async def schedule_controller():
         is_running = should_be_running()
         if is_running:
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序启动：当前时间在运行时段内")
+            # 每天程序首次启动时发送 Bark 通知（start）
+            await send_bark_message("start")
         else:
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序暂停：等待早上启动")
     
@@ -537,6 +627,8 @@ async def schedule_controller():
                     if not is_running:  # 双重检查
                         is_running = True
                         print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] ✅ 程序启动：开始发送请求和更新代理")
+                        # 每天运行时段开始时发送 Bark 通知（start）
+                        await send_bark_message("start")
             elif not is_running and not should_run:
                 # 计算到启动时间的精确秒数
                 current_seconds = current_time.hour * 3600 + current_time.minute * 60 + current_time.second
@@ -583,6 +675,8 @@ async def schedule_controller():
                     if is_running:  # 双重检查
                         is_running = False
                         print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] ⏸️ 程序暂停：停止发送请求和更新代理")
+                        # 每天运行时段结束时发送 Bark 通知（stop）
+                        await send_bark_message("stop")
             
             # 程序运行中，每分钟检查一次即可
             await asyncio.sleep(60)
