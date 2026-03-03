@@ -34,8 +34,8 @@ is_running = False  # 全局运行标志
 running_lock: asyncio.Lock = None  # 运行状态锁
 
 # 定时配置
-START_TIME = dt_time(8, 0, 0)  # 启动时间
-END_TIME = dt_time(23, 0, 0)    # 结束时间
+START_TIME = dt_time(9, 0, 0)  # 启动时间
+END_TIME = dt_time(23, 59, 59)    # 结束时间
 STATS_TIME = dt_time(22, 0, 0)  # 统计消息发送时间
 
 
