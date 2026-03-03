@@ -92,6 +92,10 @@ cookies11 = {
    "acw_tc": "b4a3cf1f17725138187856433ef121877c159be60a524c6eab9ff30347",
   "cdn_sec_tc": "b4a3cf1f17725138187856433ef121877c159be60a524c6eab9ff30347",
 }
+cookies12 = {
+  "acw_tc": "0a05731117725211653655656e79ed44e2ac82c6c966758c54b9ed11d4be69",
+  "cdn_sec_tc": "3daa4f1c17725211653275633e1dbc942c9d27e7c2934c9b33b32be72e",
+}
 
 
 # 久事2026
@@ -246,6 +250,37 @@ ACCOUNT_POOL = [
     "token": "z60EKxxGMUle/NtvK9mnwK5G3UV+zzbMg8zioakao7Uju5TogI0T2ZCZ81B9PzkFyckOgf4BHS0275b88iBFXvhmJnhSL+XB8mtuYBU/MsE",  # 第二个账号的 token
     "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
+  {
+    "name": "acc21_ios_18677290314",
+    "mobile": "18677290314",  # 第20个账号的手机号
+    "token": "66j6Uoou7kVbmKasqonQLiGVgc0+j9wSXryRzLRuurhnmU9pH5Zjhb5zz6AGto7iR/9eDQLqtLmSJQB/skkUplrSd+2DRZIDuCaUzh7Y4Wg",  # 第二个账号的 token
+    "cookies": cookies12,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc22_ios_18036579872",
+    "mobile": "18036579872",  # 第20个账号的手机号
+    "token": "zbfFgQOYBdkufmq4dUVnEL/L6d0vHF64mnNEqo5pqEEKb0N7E8LlKvKsI3rWm8Nup1hnEmGc7aVPSQMOXTa5mW/NOXuxzbYIzJPg5DHjGBM",  # 第二个账号的 token
+    "cookies": cookies12,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc23_ios_18185271599",
+    "mobile": "18185271599",  # 第20个账号的手机号
+    "token": "ndDXhed3Nyx3uaV9jcjzrFI6qBNEsprep8N5O5zZKW6tY/DSQeyU3pXWEkWM61Ccu/Ccti3x9eF/aFk4d7L4mo4rwckgr5uvWMcRjvGgO5Y",  # 第二个账号的 token
+    "cookies": cookies12,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc24_ios_17639903157",
+    "mobile": "17639903157",  # 第20个账号的手机号
+    "token": "vB+LX5izV8XG2pXf67I0oIsHMM2oP2DxHjsLnK4Obc8H+/gwYFnkiYgosZN9TWmfgl2G52WDYNn4vNmvFMF5KjPerXIsfUqPIEiyltrtOok",  # 第二个账号的 token
+    "cookies": cookies12,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc25_ios_19059683754",
+    "mobile": "19059683754",  # 第20个账号的手机号
+    "token": "9hSaSBiUE9YROVyF4nqC8eotNV4cCseH38Ig0rw5dbmE9nTLbVB+T/ejyjTnFtVhLizcVbiI8E7LUwJH87pGtRQS7unVsK7gD5CLSLZwRoA",  # 第二个账号的 token
+    "cookies": cookies12,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+
 ]
 
 
