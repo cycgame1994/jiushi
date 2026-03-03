@@ -49,12 +49,12 @@ url_c = "https://jsapp.jussyun.com/jiushi-ticket/ticket/v2-get/getShowSessionNew
 
 # cookies
 cookies = {
-  "acw_tc": "0a05731817723597552226091e19e9db17e33fc029a7d72df64bdc9c65d573",
-  "cdn_sec_tc": "b4a3cf0d17723597551117913ecf222bffc38499760def8bd268ae3ff3",
+  "acw_tc": "0a05836617725101820163284e75707541986c7a1ac16d32714b3960707777",
+  "cdn_sec_tc": "3daa4f2717725101819834056ece585cac28d6f2b7c32809be2adf8786",
 }
 cookies2 = {
-  "acw_tc": "0a05837317724147549686433e523fb9160639c75fb58c5ff44b33848147d3",
-  "cdn_sec_tc": "3daa4f2017724147549426315e98b3efc53241ce2a985e8b846439d15a",
+  "acw_tc": "0a05836f17725120295461933e3d62413701c0f03f482c58e97fa1873ef92c",
+  "cdn_sec_tc": "3daa4f2717725101819834056ece585cac28d6f2b7c32809be2adf8786",
 }
 cookies3 = {
   "acw_tc": "0a05837317724147549686433e523fb9160639c75fb58c5ff44b33848147d3",
@@ -83,6 +83,14 @@ cookies8 = {
 cookies9 = {
    "acw_tc": "0a05732417725022543803375e3927db28c71406989ec4f60ca50875a8e43e",
   "cdn_sec_tc": "3daa4f2317725004093636165e8a69e5d2988e8c0e86611d518f7b0412",
+}
+cookies10 = {
+   "acw_tc": "0a05836f17725120295461933e3d62413701c0f03f482c58e97fa1873ef92c",
+  "cdn_sec_tc": "3daa4f2717725101819834056ece585cac28d6f2b7c32809be2adf8786",
+}
+cookies11 = {
+   "acw_tc": "b4a3cf1f17725138187856433ef121877c159be60a524c6eab9ff30347",
+  "cdn_sec_tc": "b4a3cf1f17725138187856433ef121877c159be60a524c6eab9ff30347",
 }
 
 
@@ -117,96 +125,126 @@ headers = {
 # headers 是共用的，每次请求时会动态更新 fullmobile 和 token
 # 目前只配置了一个账号，后续你可以在这里继续追加更多账号
 ACCOUNT_POOL = [
-  # {
-  #   "name": "acc_ios_13817507462",  # 账号标识，可随便起名
-  #   "mobile": "13817507462",  # 手机号
-  #   "token": "iOKzFyX6B9glD0e9IQ/q0gWV90uLMCOs9LzCeovG9KbVzw22+wYX9HmRYkdjflxXdEdgHjmuAeIrXgQsdRERtHNbrHkxuGl1FpERcDCgo3Y",  # token
-  #   "cookies": cookies,  # cookies
-  # },
-  # 后续账号示例（添加时去掉前面的注释，并补充 mobile/token/cookies）
-  # {
-  #   "name": "acc_ios_第二个账号",
-  #   "mobile": "13800000000",  # 第二个账号的手机号
-  #   "token": "第二个账号的token",  # 第二个账号的 token
-  #   "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
-  # },
-  # {
-  #   "name": "acc_ios_18942240295",
-  #   "mobile": "18942240295",  # 第二个账号的手机号
-  #   "token": "9TYa5XaAcynSUGDR2Aas7YyxWWDZRbRZtiIH7RMMBYl7BhgOSs/wzshhrIV2ezvnugZ9mae6KR7//L0208OSsMh7ZGsy4OCaSfYBibirc/g",  # 第二个账号的 token
-  #   "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
-  # },
-  # {
-  #   "name": "acc_ios_19370803769",
-  #   "mobile": "19370803769",  # 第二个账号的手机号
-  #   "token": "adMV4MT3fMUEi1QL+FRz/MFZgwzZq6wS5RSKzZ/vzUye7SaCMUGvsXdkwzDs7oI/xhAXbqlpRt9RaPYlL5K4FTXK4oEmJcUhMWm0ZSWKtr8",  # 第二个账号的 token
-  #   "cookies": cookies3,  # 第二个账号的 cookies（需要在上面定义 cookies3）
-  # },
-  # {
-  #   "name": "acc_ios_18101860881",
-  #   "mobile": "18101860881",  # 第二个账号的手机号
-  #   "token": "ovdbO+x3b/TtuOSfSfELjvkX/npMl7urYtYA7JJLgzMLxRii4etN4W/0efu9zI2uda3BT4LOhK58mNou9rORPWRsMeHXH7M19lflAdHjCyY",  # 第二个账号的 token
-  #   "cookies": cookies4,  # 第二个账号的 cookies（需要在上面定义 cookies4）
-  # },
   {
-    "name": "acc_ios_19914483614",
+    "name": "acc_ios_17015750930",  # 账号标识，可随便起名
+    "mobile": "17015750930",  # 手机号
+    "token": "+/mPXmv+Qyn73w/4retGUplnmmo+Lh4DG4L4ofHppE7Q+hdaLXyRtJt546O553rfvfbQ7ETu/8SyfnmkcuJBjOGG/ZI5qgPu+W2nnppMFpU",  # token
+    "cookies": cookies,  # cookies
+  },
+  # 后续账号示例（添加时去掉前面的注释，并补充 mobile/token/cookies）
+  {
+    "name": "acc2_ios_17015750926",
+    "mobile": "17015750926",  # 第二个账号的手机号
+    "token": "iqohfQoEWMoDluIBqQO2mu4whRKeMr6A+HR5SmK6lQ2iC7TF4vMCi7dfuj0sLzkEDk7EQ6VjtIqmsbBpMJUfJza987VkSeQ+HFB+o5wz6Gg",  # 第二个账号的 token
+    "cookies": cookies,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+  },
+  {
+    "name": "acc3_ios_17339184681",
+    "mobile": "17339184681",  # 第二个账号的手机号
+    "token": "A9peBjpVgQdmazwO5Jdga9nB8vUiFhMPya89LEZ9qYRzEF0AVrUfgbCHjXAXsoFYIX8eUOs9LXGTDTV82gAqHn4emXEPe953VHd7bbwjBgc",  # 第二个账号的 token
+    "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+  },
+  {
+    "name": "acc4_ios_17124372188",
+    "mobile": "17124372188",  # 第二个账号的手机号
+    "token": "+4dz2N9l8NPtYjF7IodX5UdVvOu5QKx/KCZpzEh51mbyhGEw6i+nCU8qyCDRCt0peI01Bsk65U8iHDBdNkRz6fPJVR4u+pKxkqcZCcNhbsE",  # 第二个账号的 token
+    "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies3）
+  },
+  {
+    "name": "acc5_ios_16521618727",
+    "mobile": "16521618727",  # 第二个账号的手机号
+    "token": "bjHtqxwrN+MRIrttHjOoVHETdc3VDJYED5bK0pGK4+u9J+tdPDbjyrtIWSWTy/f7X0Sbph0ABdpTWQ/ItToyl9ijSriBB53ZdJC/BKyOEc4",  # 第二个账号的 token
+    "cookies": cookies2,  # 第二个账号的 cookies（需要在上面定义 cookies4）
+  },
+  {
+    "name": "acc6_ios_19914483614",
     "mobile": "19914483614",  # 第二个账号的手机号
     "token": "4Wkcr/tUToROtELm/SqgXmEZle6VvPaS5gQv8JI+l3aUv2L51rUJlrYWJNVjiYu31hi6ilcTCxmlObmVIbq87x+ZyZNIXTh7+MAoj3XlFcA",  # 第二个账号的 token
     "cookies": cookies5,  # 第二个账号的 cookies（需要在上面定义 cookies4）
   },
   {
-    "name": "acc_ios_19372838856",
+    "name": "acc7_ios_19372838856",
     "mobile": "19372838856",  # 第二个账号的手机号
     "token": "38O8OZOSc8aLiVKtDmfFCiVGVivcTXrwLQWpzQopMJuooM4z3zZeNiXSGGrOvLfD7S8/R5zWATuZXgbAYogOqlCXAcS0izEc90SQS97j2vs",  # 第二个账号的 token
     "cookies": cookies6,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_17080278517",
+    "name": "acc8_ios_17080278517",
     "mobile": "17080278517",  # 第二个账号的手机号
     "token": "E3d9xmdAqznIggOJKtnUS+RxhEbORvDfwsOfCu0f8EJp64UdSISTxXMsdxU8UMzavbTC0LgEG0ffAfCmSQtY6C5Bb3T+R3DvVBd0aTCEIAM",  # 第二个账号的 token
     "cookies": cookies7,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_16550836018",
+    "name": "acc9_ios_16550836018",
     "mobile": "16550836018",  # 第二个账号的手机号
     "token": "4pmzkBNbqjZTCfAPl7Tkcr4RLZf1zy7Z2/qXlMslISd7XFcxL1YmJCWRgGrpEoiqce49MpTeUwGU1jW4js1wtSndZ95reR6EjX3mF9kVOcE",  # 第二个账号的 token
     "cookies": cookies8,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_18634270308",
+    "name": "acc10_ios_18634270308",
     "mobile": "18634270308",  # 第二个账号的手机号
     "token": "ImzEktwW8Eoz/7go1VfboNACxQOzjsUDg/ktCsGkx7Rz3u6e3Chj99J8L2W+GcEdg+l8HYIzcztmgE5p6eElr+EHAKgsjiomRuUA4K4IdcE",  # 第二个账号的 token
     "cookies": cookies8,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_16741676764",
+    "name": "acc11_ios_16741676764",
     "mobile": "16741676764",  # 第二个账号的手机号
     "token": "tADFp/CMq60tauQ19bZHc9N8yFlIb7tX3CVxBe4mh53Gz5lGhMU31vLPSBGP0YI4FU6vOy7tROUm3Z6y9QkoaBbLHbj8nf41SlOKtTB/6M0",  # 第二个账号的 token
     "cookies": cookies8,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_15130756705",
+    "name": "acc12_ios_15130756705",
     "mobile": "15130756705",  # 第二个账号的手机号
     "token": "C5n/k8jWcNF2vLhgleCJNis2kdQKOfmDJ7qg98VOknPnnTWzQUDUBX/2Jr/hcZHvg6PeErgtmU+VqjjWH9kxN7gJup5flUsnsezkv4Sve9k",  # 第二个账号的 token
     "cookies": cookies8,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_19949347992",
+    "name": "acc13_ios_19949347992",
     "mobile": "19949347992",  # 第二个账号的手机号
     "token": "PFRTCToZ0X6yHtJmkeb/7ZBb1YnCFzPh5DETa1NzL7rPvTZYNZMZ2dSmadit4/6SpKeQ/fS1oKGUE5KrFnUBFhPv32btg+VmPdCYM+1ZJBo",  # 第二个账号的 token
     "cookies": cookies9,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_17166957594",
+    "name": "acc14_ios_17166957594",
     "mobile": "17166957594",  # 第二个账号的手机号
     "token": "bcd3sNZtgD0N0ZoZdvKJN+C2YiRT7J4DWFyF1fP4U+19HL2rQqv0GLBpGy1SxHDENzBbHZkaBhtxwmlllMm6rrOCmE3MzdLvXwPL28XLbjo",  # 第二个账号的 token
     "cookies": cookies9,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
   {
-    "name": "acc_ios_17153154177",
+    "name": "acc15_ios_17153154177",
     "mobile": "17153154177",  # 第二个账号的手机号
     "token": "rZU5bG4QmNb7vWaWzoakQct3AOVIq5cC00LoUVI2M5xpyLTHLhR2hRaP/izrIdNR9ttrQhulYyjuI4mNFBLCRtsnBDerWvDOSX7hyewJW9c",  # 第二个账号的 token
     "cookies": cookies9,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc16_ios_17370345543",
+    "mobile": "17370345543",  # 第二个账号的手机号
+    "token": "h2rOokUZ3MrwvMMPFi8czk88qAKPJh+XiMJTKpS6bBxxd++q1EI3JlUVFR5qrdJn3mEaTjAwjKwIFl1lgMATEfdJ8b+529OvH2uCJYOHWJ4",  # 第二个账号的 token
+    "cookies": cookies10,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc17_ios_18577559847",
+    "mobile": "18577559847",  # 第二个账号的手机号
+    "token": "vVGlCu+41Qn/pcXDtFJFBHkNVHHFPsBQoIZXQQyPCIAuFZyW2bVD1qQciILgJrB4CsRwljgIRkxAu4QvscoMGvstBp3bEOYI8ON86Hyoj/o",  # 第二个账号的 token
+    "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc18_ios_17194650193",
+    "mobile": "17194650193",  # 第18个账号的手机号
+    "token": "0Pkuzhs1OOqSWwXcdqg41HS1fVb6Mj/VAlnLR/RVL+wT0lrIxRKlZj2hLcsR1G6SJMNXR9EZnYF7623Eu/Vk7V78spokq4kJ2sR4UdzHmz8",  # 第二个账号的 token
+    "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc19_ios_16735967074",
+    "mobile": "16735967074",  # 第19个账号的手机号
+    "token": "RRujV1mDUPKY1q22nChl/d2qmA5W0jbAHhY2whwcpLI0VkcYqVOLyPePT1cF+b+xDHYc4gJx7FRpAet+3ldhQ6m7CgyNl69gJuTkb6Qv9UQ",  # 第二个账号的 token
+    "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
+  {
+    "name": "acc20_ios_17025272941",
+    "mobile": "17025272941",  # 第20个账号的手机号
+    "token": "z60EKxxGMUle/NtvK9mnwK5G3UV+zzbMg8zioakao7Uju5TogI0T2ZCZ81B9PzkFyckOgf4BHS0275b88iBFXvhmJnhSL+XB8mtuYBU/MsE",  # 第二个账号的 token
+    "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
 ]
 
