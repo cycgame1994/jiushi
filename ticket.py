@@ -24,7 +24,7 @@ from proxy_config import get_proxy_dict, proxy_updater_task, force_refresh_proxy
 """
 1.增加代理ip,轮询请求网址 √
 2.增加每天定时启动，关闭发送请求 √
-4.增加统计功能，监控到有票后，统计每一种票的库存数量，发送到钉钉消息
+4.增加统计功能，监控到有票后，统计每一种票的出现次数，发送到钉钉消息
 5.失败重试机制，每5次失败发送推送消息到ios的bark
 6.按照a,j,d,b,h,k,e,c的顺序请求，每一轮发送钉钉消息，而不是每一次请求发一次，并且消息中带有时间戳
 7，为后续和手机的autox自动抢票做准备，检测到有票后，发送websocket信息给手机的autox
@@ -113,8 +113,8 @@ ticket_detected_time = None  # 检测到有票的时间戳
 ticket_detected_lock: asyncio.Lock = None  # 有票状态锁
 SLOW_INTERVAL_MIN = 25  # 慢速请求间隔（秒）- 最小值
 SLOW_INTERVAL_MAX = 30  # 慢速请求间隔（秒）- 最大值
-FAST_INTERVAL_MIN = 15  # 快速请求间隔（秒）- 最小值（检测到有票后）
-FAST_INTERVAL_MAX = 20   # 快速请求间隔（秒）- 最大值（检测到有票后）
+FAST_INTERVAL_MIN = 25  # 快速请求间隔（秒）- 最小值（检测到有票后）
+FAST_INTERVAL_MAX = 30   # 快速请求间隔（秒）- 最大值（检测到有票后）
 TICKET_TIMEOUT = 5 * 60  # 10分钟后无新票恢复慢速（秒）
 
 def get_ticket_detected_lock():
@@ -445,37 +445,29 @@ async def async_post_request(session, url, request_type):
                     except Exception as e:
                         print(f"[{datetime.now().strftime('%m-%d %H:%M:%S')}] 发送 Bark 通知失败: {e}")
 
-                # 收集本次请求中所有有库存的priceName和库存数量
-                # 判断条件：库存大于0即认为有票（不限制必须等于1）
-                available_tickets = [
-                    (
-                        priceInfoMode['priceName'].split('/', 1)[0].strip(),
-                        priceInfoMode.get('stock', 0)
-                    )
+                # 收集本次请求中所有“有票”的 priceName
+                # 判断条件：stock > 0 即认为有票（仅用于判断，不在打印/钉钉消息中展示库存）
+                available_ticket_names = [
+                    priceInfoMode["priceName"].split("/", 1)[0].strip()
                     for session_item in showSessionModelList
-                    for priceInfoMode in session_item.get('priceInfoModelList', [])
-                    if priceInfoMode.get('stock', 0) > 0
+                    for priceInfoMode in session_item.get("priceInfoModelList", [])
+                    if priceInfoMode.get("stock", 0) > 0
                 ]
                 
-                # 如果有库存，批量打印并异步处理通知（不阻塞主循环）
-                if available_tickets:
+                # 如果有票，批量打印并异步处理通知（不阻塞主循环）
+                if available_ticket_names:
                     # 标记检测到有票，切换到快速请求模式
                     await mark_ticket_detected()
-                    
-                    # 格式化票务信息：priceName + 空格 + 库存 + 库存数字
-                    tickets_with_stock = [f"{name} 库存{stock}" for name, stock in available_tickets]
-                    # 只提取priceName用于统计（保持原有统计逻辑）
-                    price_names_only = [name for name, stock in available_tickets]
-                    
-                    # 批量打印所有有票信息（包含库存，减少I/O操作，但保留日志）
-                    print(f"[{request_type}] 检测到有票: {', '.join(tickets_with_stock)}")
-                    
-                    # 用制表位（Tab）分隔所有有票信息（包含库存）
-                    tickets_info = "\t".join(tickets_with_stock)
+
+                    # 批量打印所有有票信息（不包含库存）
+                    print(f"[{request_type}] 检测到有票: {', '.join(available_ticket_names)}")
+
+                    # 用制表位（Tab）分隔所有有票信息（不包含库存）
+                    tickets_info = "\t".join(available_ticket_names)
                     
                     # 将统计更新和通知发送放到后台任务，不阻塞主循环
                     # 使用 create_task 让这些操作在后台异步执行，主循环可以继续请求
-                    asyncio.create_task(update_daily_stats(price_names_only))
+                    asyncio.create_task(update_daily_stats(available_ticket_names))
                     asyncio.create_task(send_dingdingbot_async(tickets_info))
             else:
                 print(f"请求失败，状态码：{response.status_code}")
