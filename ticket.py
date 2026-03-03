@@ -38,17 +38,29 @@ BARK_BASE_URL = "https://api.day.app/BWhqdkST7VWwSj3HU5tbRo"
 
 # 熔断/软封禁控制配置
 SOFTBAN_BARK_THRESHOLD = 7       # 连续触发 Bark 次数达到该值后触发熔断
-PAUSE_DURATION_SECONDS = 60     # 熔断暂停时间（秒），可按需调整
+PAUSE_DURATION_SECONDS = 40     # 熔断暂停时间（秒），可按需调整
 
 # 熔断状态
-softban_bark_count = 0           # 当前累计的 Bark 次数（用于软封禁判断）
-pause_in_progress = False        # 是否已经在执行暂停流程，避免重复触发
+softban_bark_count = 0             # 当前累计的 Bark 次数（用于软封禁判断）
+pause_in_progress = False          # 是否已经在执行暂停流程，避免重复触发
+softban_active = False             # 是否处于软封禁熔断期（为 True 时强制不运行）
 softban_lock: asyncio.Lock = None  # 熔断计数锁
 
 # 定时配置
-START_TIME = dt_time(9, 0, 0)  # 启动时间
-END_TIME = dt_time(23, 59, 59)    # 结束时间
+START_TIME = dt_time(9, 0, 0)   # 启动时间
+END_TIME = dt_time(23, 59, 59)  # 结束时间
 STATS_TIME = dt_time(22, 0, 0)  # 统计消息发送时间
+
+
+def is_within_running_window(now: datetime | None = None) -> bool:
+    """
+    判断当前时间是否在配置的运行窗口内。
+    运行时间：START_TIME 到 END_TIME（含边界）。
+    """
+    if now is None:
+        now = datetime.now()
+    current_time = now.time()
+    return START_TIME <= current_time <= END_TIME
 
 
 def get_running_lock():
@@ -377,19 +389,20 @@ async def pause_all_requests_due_to_softban():
     触发熔断：暂停所有请求一段时间，然后自动恢复。
     会发送 Bark 通知：stop（开始暂停）和 start（恢复）。
     """
-    global is_running, pause_in_progress, softban_bark_count
+    global is_running, pause_in_progress, softban_bark_count, softban_active
 
-    # 防止重复进入
+    # 防止重复进入，同时标记软封禁生效
     async with get_softban_lock():
         if pause_in_progress:
             return
         pause_in_progress = True
+        softban_active = True
 
     try:
         # 先暂停：设置全局运行标志为 False
         async with get_running_lock():
             if not is_running:
-                # 已经是暂停状态，直接退出并重置标志
+                # 已经是暂停状态，仅确保软封禁标志生效
                 async with get_softban_lock():
                     pause_in_progress = False
                 return
@@ -402,17 +415,19 @@ async def pause_all_requests_due_to_softban():
         # 暂停指定时间
         await asyncio.sleep(PAUSE_DURATION_SECONDS)
 
-        # 恢复运行（按时间窗口控制，如果此时 schedule_controller 已经关闭，则这里的 True 会很快被覆盖）
+        # 熔断结束：根据时间窗口决定是否恢复运行
         async with get_running_lock():
-            is_running = True
+            is_running = is_within_running_window()
 
-        # 重置软封禁计数
+        # 重置软封禁计数和标志
         async with get_softban_lock():
             softban_bark_count = 0
+            softban_active = False
 
-        # 发送 Bark 通知：程序重新启动
-        await send_bark_message("start")
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 软封禁熔断结束：恢复所有请求")
+        # 发送 Bark 通知：程序重新启动（仅在当前时间允许运行时发送）
+        if is_running:
+            await send_bark_message("start")
+            print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 软封禁熔断结束：恢复所有请求")
     finally:
         # 无论成功与否，都要重置 pause_in_progress 状态
         async with get_softban_lock():
@@ -584,22 +599,12 @@ async def schedule_controller():
     定时控制任务：每天0点关闭，7点启动，并在新的一天重置统计
     每天22点发送每日统计消息
     """
-    global is_running, current_date, daily_stats
-    
-    def should_be_running():
-        """判断当前时间是否应该在运行
-        运行时间：START_TIME 到 END_TIME
-        关闭时间：其他时间
-        """
-        now = datetime.now()
-        current_time = now.time()
-
-        # 在启动时间和结束时间之间运行
-        return START_TIME <= current_time <= END_TIME
+    global is_running, current_date, daily_stats, softban_active
     
     # 初始化运行状态和统计
     async with get_running_lock():
-        is_running = should_be_running()
+        # 初始时根据时间窗口和软封禁状态决定是否运行
+        is_running = is_within_running_window() and not softban_active
         if is_running:
             print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 程序启动：当前时间在运行时段内")
             # 每天程序首次启动时发送 Bark 通知（start）
@@ -618,13 +623,14 @@ async def schedule_controller():
             now = datetime.now()
             today = now.date()
             current_time = now.time()
-            should_run = should_be_running()
+            # 只有在时间窗口内且未处于软封禁期才“应该运行”
+            should_run = is_within_running_window(now) and not softban_active
             
             # 如果程序未运行，计算到启动时间的精确等待时间
             if not is_running and should_run:
                 # 直接启动，不等待
                 async with get_running_lock():
-                    if not is_running:  # 双重检查
+                    if not is_running and not softban_active:  # 双重检查并避开熔断期
                         is_running = True
                         print(f"[{now.strftime('%Y-%m-%d %H:%M:%S')}] ✅ 程序启动：开始发送请求和更新代理")
                         # 每天运行时段开始时发送 Bark 通知（start）
