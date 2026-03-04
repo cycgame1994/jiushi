@@ -37,8 +37,15 @@ running_lock: asyncio.Lock = None  # 运行状态锁
 BARK_BASE_URL = "https://api.day.app/BWhqdkST7VWwSj3HU5tbRo"
 
 # 熔断/软封禁控制配置
-SOFTBAN_BARK_THRESHOLD = 7       # 连续触发 Bark 次数达到该值后触发熔断
-PAUSE_DURATION_SECONDS = 40     # 熔断暂停时间（秒），可按需调整
+# 连续触发 Bark 次数达到该值后触发熔断
+SOFTBAN_BARK_THRESHOLD = 7
+
+# 熔断暂停时间（秒）
+# - 放票/高峰期：暂停 20 秒
+# - 空闲期：暂停 40 秒
+# 后期如果需要调整，只需修改下面两个值即可
+PAUSE_DURATION_SECONDS_ACTIVE = 30  # 放票/高峰期
+PAUSE_DURATION_SECONDS_IDLE = 40    # 空闲期
 
 # 熔断状态
 softban_bark_count = 0             # 当前累计的 Bark 次数（用于软封禁判断）
@@ -140,14 +147,14 @@ async def get_next_account(request_type: str):
         return account
 
 # 动态请求速率控制：根据是否有票调整请求频率
-# 平时慢速请求，检测到有票后加快，30分钟后无新票恢复慢速
+# 平时慢速请求，检测到有票后加快，一段时间后无新票恢复慢速
 ticket_detected_time = None  # 检测到有票的时间戳
 ticket_detected_lock: asyncio.Lock = None  # 有票状态锁
 SLOW_INTERVAL_MIN = 25  # 慢速请求间隔（秒）- 最小值
 SLOW_INTERVAL_MAX = 30  # 慢速请求间隔（秒）- 最大值
-FAST_INTERVAL_MIN = 25  # 快速请求间隔（秒）- 最小值（检测到有票后）
-FAST_INTERVAL_MAX = 30   # 快速请求间隔（秒）- 最大值（检测到有票后）
-TICKET_TIMEOUT = 5 * 60  # 10分钟后无新票恢复慢速（秒）
+FAST_INTERVAL_MIN = 15 # 快速请求间隔（秒）- 最小值（检测到有票后）
+FAST_INTERVAL_MAX = 20  # 快速请求间隔（秒）- 最大值（检测到有票后）
+TICKET_TIMEOUT = 5 * 60  # 一段时间后无新票恢复慢速（秒）
 
 def get_ticket_detected_lock():
     """获取或创建有票状态锁"""
@@ -185,6 +192,27 @@ async def get_request_interval():
             else:
                 # 快速模式
                 return random.randint(FAST_INTERVAL_MIN, FAST_INTERVAL_MAX)
+
+
+def get_current_pause_duration_seconds() -> int:
+    """
+    根据当前状态返回熔断暂停时长：
+    - 认为处于放票/高峰期（最近检测到有票且未超过 TICKET_TIMEOUT）时：20 秒
+    - 其他空闲时段：40 秒
+
+    如需后期调整，可直接修改顶部的
+    PAUSE_DURATION_SECONDS_ACTIVE / PAUSE_DURATION_SECONDS_IDLE 常量。
+    """
+    global ticket_detected_time
+
+    # 最近有票，且仍在“有票有效期”内，认为是放票高峰期
+    if ticket_detected_time is not None:
+        now_ts = datetime.now().timestamp()
+        if now_ts - ticket_detected_time < TICKET_TIMEOUT:
+            return PAUSE_DURATION_SECONDS_ACTIVE
+
+    # 其他情况按空闲期处理
+    return PAUSE_DURATION_SECONDS_IDLE
 
 # 代理刷新策略：同一渠道连续失败 3 次才触发刷新；刷新由后台任务合并/去重执行
 FAILURES_TO_REFRESH = 2
@@ -408,12 +436,15 @@ async def pause_all_requests_due_to_softban():
                 return
             is_running = False
 
+        # 根据当前状态（是否最近检测到有票）动态选择熔断暂停时间
+        pause_seconds = get_current_pause_duration_seconds()
+
         # 发送 Bark 通知：程序停止（soft stop）
         await send_bark_message("stop")
-        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 软封禁熔断触发：暂停所有请求 {PAUSE_DURATION_SECONDS} 秒")
+        print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] 软封禁熔断触发：暂停所有请求 {pause_seconds} 秒")
 
         # 暂停指定时间
-        await asyncio.sleep(PAUSE_DURATION_SECONDS)
+        await asyncio.sleep(pause_seconds)
 
         # 熔断结束：根据时间窗口决定是否恢复运行
         async with get_running_lock():
