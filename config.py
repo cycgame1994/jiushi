@@ -226,12 +226,12 @@ ACCOUNT_POOL = [
     "token": "h2rOokUZ3MrwvMMPFi8czk88qAKPJh+XiMJTKpS6bBxxd++q1EI3JlUVFR5qrdJn3mEaTjAwjKwIFl1lgMATEfdJ8b+529OvH2uCJYOHWJ4",  # 第二个账号的 token
     "cookies": cookies10,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
-  {
-    "name": "acc17_ios_18577559847",
-    "mobile": "18577559847",  # 第二个账号的手机号
-    "token": "vVGlCu+41Qn/pcXDtFJFBHkNVHHFPsBQoIZXQQyPCIAuFZyW2bVD1qQciILgJrB4CsRwljgIRkxAu4QvscoMGvstBp3bEOYI8ON86Hyoj/o",  # 第二个账号的 token
-    "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
-  },
+  # {
+  #   "name": "acc17_ios_18577559847",
+  #   "mobile": "18577559847",  # 第二个账号的手机号
+  #   "token": "vVGlCu+41Qn/pcXDtFJFBHkNVHHFPsBQoIZXQQyPCIAuFZyW2bVD1qQciILgJrB4CsRwljgIRkxAu4QvscoMGvstBp3bEOYI8ON86Hyoj/o",  # 第二个账号的 token
+  #   "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  # },
   {
     "name": "acc18_ios_17194650193",
     "mobile": "17194650193",  # 第18个账号的手机号
