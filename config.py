@@ -96,6 +96,10 @@ cookies12 = {
   "acw_tc": "0a05731117725211653655656e79ed44e2ac82c6c966758c54b9ed11d4be69",
   "cdn_sec_tc": "3daa4f1c17725211653275633e1dbc942c9d27e7c2934c9b33b32be72e",
 }
+cookies13 = {
+  "acw_tc": "0a05731117727233246721762e79d4d72a8d9e7ae2d9b9fe9c51371cf93881",
+  "cdn_sec_tc": "b4a3cf1e17727208245002302eb8983977ac080b2260bbbacd5cdaa0cd",
+}
 
 
 # 久事2026
@@ -226,12 +230,12 @@ ACCOUNT_POOL = [
     "token": "h2rOokUZ3MrwvMMPFi8czk88qAKPJh+XiMJTKpS6bBxxd++q1EI3JlUVFR5qrdJn3mEaTjAwjKwIFl1lgMATEfdJ8b+529OvH2uCJYOHWJ4",  # 第二个账号的 token
     "cookies": cookies10,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
-  # {
-  #   "name": "acc17_ios_18577559847",
-  #   "mobile": "18577559847",  # 第二个账号的手机号
-  #   "token": "vVGlCu+41Qn/pcXDtFJFBHkNVHHFPsBQoIZXQQyPCIAuFZyW2bVD1qQciILgJrB4CsRwljgIRkxAu4QvscoMGvstBp3bEOYI8ON86Hyoj/o",  # 第二个账号的 token
-  #   "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
-  # },
+  {
+    "name": "acc17_ios_16223272709",
+    "mobile": "16223272709",  # 第二个账号的手机号
+    "token": "YRWIaD26v5jTu3z4cTH9QI0IAUAifANzUfBZu+g2oL8mT8qcB9SPbS7+D+kojz0SXU4jfOjiJFAgYW11GdcYT5PCXfBr+horCbt1Woh645M",  # 第二个账号的 token
+    "cookies": cookies13,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  },
   {
     "name": "acc18_ios_17194650193",
     "mobile": "17194650193",  # 第18个账号的手机号
