@@ -44,7 +44,7 @@ SOFTBAN_BARK_THRESHOLD = 7
 # - 放票/高峰期：暂停 20 秒
 # - 空闲期：暂停 40 秒
 # 后期如果需要调整，只需修改下面两个值即可
-PAUSE_DURATION_SECONDS_ACTIVE = 30  # 放票/高峰期
+PAUSE_DURATION_SECONDS_ACTIVE = 40  # 放票/高峰期
 PAUSE_DURATION_SECONDS_IDLE = 40    # 空闲期
 
 # 熔断状态
@@ -152,8 +152,8 @@ ticket_detected_time = None  # 检测到有票的时间戳
 ticket_detected_lock: asyncio.Lock = None  # 有票状态锁
 SLOW_INTERVAL_MIN = 25  # 慢速请求间隔（秒）- 最小值
 SLOW_INTERVAL_MAX = 30  # 慢速请求间隔（秒）- 最大值
-FAST_INTERVAL_MIN = 15 # 快速请求间隔（秒）- 最小值（检测到有票后）
-FAST_INTERVAL_MAX = 20  # 快速请求间隔（秒）- 最大值（检测到有票后）
+FAST_INTERVAL_MIN = 20 # 快速请求间隔（秒）- 最小值（检测到有票后）
+FAST_INTERVAL_MAX = 25  # 快速请求间隔（秒）- 最大值（检测到有票后）
 TICKET_TIMEOUT = 5 * 60  # 一段时间后无新票恢复慢速（秒）
 
 def get_ticket_detected_lock():
