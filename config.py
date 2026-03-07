@@ -145,10 +145,10 @@ ACCOUNT_POOL = [
   },
   # 后续账号示例（添加时去掉前面的注释，并补充 mobile/token/cookies）
   {
-    "name": "acc2_ios_17015750926",
-    "mobile": "17015750926",  # 第二个账号的手机号
-    "token": "iqohfQoEWMoDluIBqQO2mu4whRKeMr6A+HR5SmK6lQ2iC7TF4vMCi7dfuj0sLzkEDk7EQ6VjtIqmsbBpMJUfJza987VkSeQ+HFB+o5wz6Gg",  # 第二个账号的 token
-    "cookies": cookies,  # 第二个账号的 cookies（需要在上面定义 cookies2）
+    "name": "acc2_ios_19178845510",
+    "mobile": "19178845510",  # 第二个账号的手机号
+    "token": "Z303HYe6oJo26ySaf+OpvYnmJ96UjFk/w0Ia1H15In23l1moiSk90LSvrewbjWNCbpFI4Y2B5kwD02Ni8YxFQf+XKTvl27c39rtbn2cdmbA",  # 第二个账号的 token
+    "cookies": cookies14,  # 第二个账号的 cookies（需要在上面定义 cookies2）
   },
   {
     "name": "acc3_ios_17339184681",
