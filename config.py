@@ -260,12 +260,12 @@ ACCOUNT_POOL = [
     "token": "RRujV1mDUPKY1q22nChl/d2qmA5W0jbAHhY2whwcpLI0VkcYqVOLyPePT1cF+b+xDHYc4gJx7FRpAet+3ldhQ6m7CgyNl69gJuTkb6Qv9UQ",  # 第二个账号的 token
     "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
   },
-  {
-    "name": "acc20_ios_17025272941",
-    "mobile": "17025272941",  # 第20个账号的手机号
-    "token": "z60EKxxGMUle/NtvK9mnwK5G3UV+zzbMg8zioakao7Uju5TogI0T2ZCZ81B9PzkFyckOgf4BHS0275b88iBFXvhmJnhSL+XB8mtuYBU/MsE",  # 第二个账号的 token
-    "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
-  },
+  # {
+  #   "name": "acc20_ios_17025272941",
+  #   "mobile": "17025272941",  # 第20个账号的手机号
+  #   "token": "z60EKxxGMUle/NtvK9mnwK5G3UV+zzbMg8zioakao7Uju5TogI0T2ZCZ81B9PzkFyckOgf4BHS0275b88iBFXvhmJnhSL+XB8mtuYBU/MsE",  # 第二个账号的 token
+  #   "cookies": cookies11,  # 第二个账号的 cookies（需要在上面定义 cookies6）
+  # },
   {
     "name": "acc21_ios_18677290314",
     "mobile": "18677290314",  # 第20个账号的手机号
